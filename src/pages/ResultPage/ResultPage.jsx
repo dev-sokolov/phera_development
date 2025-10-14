@@ -16,7 +16,7 @@ const ResultPage = () => {
 
             {capturedImage ? (
                 <div className={styles.wrapCaptured}>
-                    <img src={capturedImage} alt="Captured pH strip" className={styles.resultImage} />
+                    <img src={capturedImage} alt="Captured pH strip" className={styles.capturedImg} />
                 </div>
             ) : (
                 <p>No image found.</p>
