@@ -8,22 +8,45 @@ const ResultPage = () => {
     const navigate = useNavigate();
 
     // Получаем переданные данные
-    const { capturedImage } = location.state || {};
+    const { capturedImage } = location.state || {}; //////////////////////////
     
     return (
+        // <div className={styles.wrapResultPage}>
+        //     <h2 className={styles.title}>Result page</h2>
+
+        //     {capturedImage ? (
+        //         <div className={styles.wrapCaptured}>
+        //             <img src={capturedImage} alt="Captured pH strip" className={styles.capturedImg} />
+        //         </div>
+        //     ) : (
+        //         <p>No image found.</p>
+        //     )}
+
+        //     <div className={styles.wrapBtn}>
+        //         <Button onClick={() => navigate("/")}>Home</Button>
+        //     </div>
+        // </div>
+        ///////////////////////////////////////////////////////////////////////////////
         <div className={styles.wrapResultPage}>
-            <h2 className={styles.title}>Result page</h2>
-
-            {capturedImage ? (
-                <div className={styles.wrapCaptured}>
-                    <img src={capturedImage} alt="Captured pH strip" className={styles.capturedImg} />
+            <div className={styles.content}>
+                <div className={styles.ph}>
+                    <p className={styles.phTitle}>Your pH</p>
+                    <p className={styles.phValue}>4.3</p>
+                    <div className={styles.phInfo}>
+                        <div>clock</div>
+                        <div>15.10.2025, 20:12:09</div>
+                        <div className={styles.phConfidence}>
+                            <div>98%</div>
+                            <div>Confidence</div>
+                        </div>
+                    </div>
                 </div>
-            ) : (
-                <p>No image found.</p>
-            )}
-
-            <div className={styles.wrapBtn}>
-                <Button onClick={() => navigate("/")}>Home</Button>
+                <div className={styles.phDescription}>
+                    <h3>What This Means</h3>
+                    <p>Your pH is within the typical acidic range associated with Lactobacillus dominance.</p>
+                </div>
+                <div className={styles.processingResults}></div>
+                <div className={styles.personalInfo}></div>
             </div>
         </div>
     );

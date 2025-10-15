@@ -8,13 +8,11 @@ import styles from "./HomePage.module.css";
 
 const HomePage = () => {
     const [isCameraOn, setIsCameraOn] = useState(false);
-    // const [capturedImage, setCapturedImage] = useState(null);
 
     const webcamRef = useRef(null);
     const navigate = useNavigate();
 
     const handleStartCamera = () => {
-        // setCapturedImage(null);
         setIsCameraOn(true);
     };
 
@@ -32,20 +30,12 @@ const HomePage = () => {
     const handleCapture = () => {
         if (webcamRef.current) {
             const imageSrc = webcamRef.current.getScreenshot();
-            // setCapturedImage(imageSrc);
-            // handleStopCamera();
             stopCamera();
 
             // Переход на страницу результатов
             navigate("/result", { state: { capturedImage: imageSrc } });
         }
     };
-
-    // const handleReset = () => {
-    //     stopCamera();
-    //     setCapturedImage(null);
-    //     setIsCameraOn(false);
-    // };
 
     return (
         <>
@@ -78,20 +68,6 @@ const HomePage = () => {
                     </div>
                 </div>
             )}
-
-            {/* {capturedImage && (
-                <>
-                    <div className={styles.wrapGreeting}>
-                        <p className={styles.greeting}>Result page</p>
-                    </div>
-                    <CapturedImage
-                        src={capturedImage}
-                        handleStartCamera={handleStartCamera}
-                        handleReset={handleReset}
-                    />
-                </>
-
-            )} */}
         </>
     )
 }

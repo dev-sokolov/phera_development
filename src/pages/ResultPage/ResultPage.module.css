@@ -1,4 +1,4 @@
-.wrapResultPage {
+/* .wrapResultPage {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,4 +23,77 @@
 
 .capturedImg {
     max-width: 45%;
+} */
+
+/* ///////////////////////////////////////////////// */
+
+.wrapResultPage {
+    background-color: rgb(224, 222, 210);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 640px;
+    padding: 24px 16px;
+}
+
+.ph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px;
+    background-color: #FFFFFF;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.phTitle {
+    color: #627084;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.phValue {
+    color: #1D2530;
+    margin-top: 16px;
+    font-size: 72px;
+    font-weight: 700;
+}
+
+.phInfo {
+    display: flex;
+    margin-top: 16px;
+    gap: 20px;
+    color: #627084;
+        font-size: 14px;
+}
+
+.phConfidence {
+    display: flex;
+    font-size: 12px;
+}
+
+.phDescription {
+    background-color: #FFFFFF;
+    padding: 24px;
+    width: 100%;
+    border-radius: 15px;
+}
+
+.phDescription h3 {
+    margin-bottom: 12px;
+    color: #1D2530;
+    font-weight: 600;
+}
+
+.phDescription p {
+    color: #627084;
+    font-size: 14px;
+    line-height: 1.7;
 }
