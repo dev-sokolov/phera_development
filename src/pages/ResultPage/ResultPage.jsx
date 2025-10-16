@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../components/Button/Button";
 
@@ -9,24 +10,14 @@ const ResultPage = () => {
 
     // Получаем переданные данные
     const { capturedImage } = location.state || {}; //////////////////////////
+
+    useEffect(() => {
+        if (!capturedImage) {
+            navigate("/", {replace: true});
+        }
+    }, [capturedImage, navigate])
     
     return (
-        // <div className={styles.wrapResultPage}>
-        //     <h2 className={styles.title}>Result page</h2>
-
-        //     {capturedImage ? (
-        //         <div className={styles.wrapCaptured}>
-        //             <img src={capturedImage} alt="Captured pH strip" className={styles.capturedImg} />
-        //         </div>
-        //     ) : (
-        //         <p>No image found.</p>
-        //     )}
-
-        //     <div className={styles.wrapBtn}>
-        //         <Button onClick={() => navigate("/")}>Home</Button>
-        //     </div>
-        // </div>
-        ///////////////////////////////////////////////////////////////////////////////
         <div className={styles.wrapResultPage}>
             <div className={styles.content}>
                 <div className={styles.ph}>

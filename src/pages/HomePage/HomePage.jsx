@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
 // import CapturedImage from "../../components/CapturedImage/CapturedImage";
 import Button from "../../components/Button/Button";
@@ -32,10 +32,17 @@ const HomePage = () => {
             const imageSrc = webcamRef.current.getScreenshot();
             stopCamera();
 
-            // Переход на страницу результатов
+            // moving to result page
             navigate("/result", { state: { capturedImage: imageSrc } });
         }
     };
+
+    //clearing the camera after moving to another page
+    useEffect(() => {
+        return () => {
+            stopCamera();
+        }
+    }, []);
 
     return (
         <>
@@ -58,7 +65,7 @@ const HomePage = () => {
                             imageSmoothing={false}
                             videoConstraints={{ facingMode: "environment" }}
                             width={window.innerWidth}
-                            height={window.innerHeight * 0.5} // под 80vh
+                            height={window.innerHeight * 0.5} // for 50vh
                             playsInline
                         />
                     </div>
