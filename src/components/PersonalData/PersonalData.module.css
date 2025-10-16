@@ -1,0 +1,24 @@
+.wrapper {
+    width: 100%;
+}
+
+.wrapper h3 {
+    margin-bottom: 16px;
+    color: #1D2530;
+    font-weight: 600;
+}
+
+.title {
+    display: block;
+}
+
+.select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 15px;
+    margin-top: 10px;
+}
+
+.recommendation {
+    background-color: rgb(224, 222, 210);
+}
