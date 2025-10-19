@@ -66,14 +66,28 @@ const PersonalData = () => {
 
     // Закрытие при клике вне блока
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        const handleClick = (event) => {
+            const dropdown = dropdownRef.current;
+
+            // Если клик вне блока
+            if (!dropdown || !dropdown.contains(event.target)) {
+                setIsAgeOpen(false);
+                setIsHormoneOpen(false);
+                return;
+            }
+
+            // Если клик ВНУТРИ блока, но не в сам dropdown и не в кнопку открытия
+            const isDropdownClick = event.target.closest(`.${styles.dropdown}`);
+            const isSelectClick = event.target.closest(`.${styles.select}`);
+
+            if (!isDropdownClick && !isSelectClick) {
                 setIsAgeOpen(false);
                 setIsHormoneOpen(false);
             }
         };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+
+        document.addEventListener("mousedown", handleClick);
+        return () => document.removeEventListener("mousedown", handleClick);
     }, []);
 
     // рекомендации
