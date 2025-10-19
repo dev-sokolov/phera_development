@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 
 import styles from "./PersonalData.module.css";
 
-const PersonalData = () => {
+const PersonalData = ({ isActive }) => {
     const { register, watch, setValue } = useForm();
     const { age, hormone = [], ancestral } = watch(); // Отслеживаем все поля
 
@@ -22,11 +22,6 @@ const PersonalData = () => {
 
     const ageOptions = ["18-24", "25-34", "35-44", "45-54", "55+"];
 
-    // const toggleHormoneDropdown = () => {
-    //     setIsHormoneOpen((prev) => !prev);
-    // };
-    // const toggleAgeDropdown = () => setIsAgeOpen((prev) => !prev);
-    // const toggleHormoneDropdown = () => setIsHormoneOpen((prev) => !prev);
     // ▼ Тогглы
     const toggleAgeDropdown = () => {
         setIsAgeOpen((prev) => {
@@ -64,23 +59,22 @@ const PersonalData = () => {
         setValue("hormone", updated);
     };
 
-    // Закрытие при клике вне блока
     useEffect(() => {
         const handleClick = (event) => {
-            const dropdown = dropdownRef.current;
+            const container = dropdownRef.current;
+            if (!container) return;
 
-            // Если клик вне блока
-            if (!dropdown || !dropdown.contains(event.target)) {
+            const clickedInside = container.contains(event.target);
+            if (!clickedInside) {
                 setIsAgeOpen(false);
                 setIsHormoneOpen(false);
                 return;
             }
 
-            // Если клик ВНУТРИ блока, но не в сам dropdown и не в кнопку открытия
-            const isDropdownClick = event.target.closest(`.${styles.dropdown}`);
-            const isSelectClick = event.target.closest(`.${styles.select}`);
+            const isDropdown = event.target.closest('[class*="dropdown"]');
+            const isSelect = event.target.closest('[class*="select"]');
 
-            if (!isDropdownClick && !isSelectClick) {
+            if (!isDropdown && !isSelect) {
                 setIsAgeOpen(false);
                 setIsHormoneOpen(false);
             }
@@ -103,25 +97,16 @@ const PersonalData = () => {
         <>
             <div className={styles.wrapper} ref={dropdownRef}>
                 <h3 className={styles.heading}>Share data to get more personalised results (Optional)</h3>
-                {/* <div> */}
                 <form className={styles.form}>
-                    {/* <label className={styles.title} >Age Group
-                        <select {...register("age")} className={styles.select}>
-                            <option value="" className={styles.dropdown}>Select age group</option>
-                            <option value="18-24" className={styles.dropdown}>18-24</option>
-                            <option value="25-34" className={styles.dropdown}>25-34</option>
-                            <option value="35-44" className={styles.dropdown}>35-44</option>
-                            <option value="45-54" className={styles.dropdown}>45-54</option>
-                            <option value="55+" className={styles.dropdown}>55+</option>
-                        </select>
-                    </label> */}
                     {/* AGE GROUP */}
                     <label className={styles.title}>
                         Age Group
                         <div
-                            className={styles.select}
-                            onClick={toggleAgeDropdown}
-                            tabIndex={0}
+                            // className={styles.select}
+                            // onClick={toggleAgeDropdown}
+                            className={`${styles.select} ${!isActive ? styles.selectDisabled : ""}`}
+                            onClick={isActive ? toggleAgeDropdown : undefined}
+                            tabIndex={isActive ? 0 : -1}
                         >
                             {age || "Select age group"}
                             <span className={styles.arrow}>{isAgeOpen ? "▲" : "▼"}</span>
@@ -143,13 +128,15 @@ const PersonalData = () => {
                     </label>
 
                     {/* HORMONE FACTORS */}
-
-                    <label className={styles.title} ref={dropdownRef}>
-                        Hormone Factors
+                    <label className={styles.title}>
+                        Hormone Status
                         <div
-                            className={styles.select}
-                            onClick={toggleHormoneDropdown}
-                            tabIndex={0}
+                            // className={styles.select}
+                            // onClick={toggleHormoneDropdown}
+                            // tabIndex={0}
+                            className={`${styles.select} ${!isActive ? styles.selectDisabled : ""}`}
+                            onClick={isActive ? toggleHormoneDropdown : undefined}
+                            tabIndex={isActive ? 0 : -1}
                         >
                             Select hormone factors
                             <span className={styles.arrow}>{isHormoneOpen ? "▲" : "▼"}</span>
@@ -195,7 +182,6 @@ const PersonalData = () => {
                     )}
 
                 </form>
-                {/* </div> */}
             </div>
             {(age || (hormone && hormone.length > 0) || ancestral) && (
                 <div className={styles.wrapRecommendation}>
