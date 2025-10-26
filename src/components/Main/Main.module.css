@@ -10,6 +10,10 @@ main {
     margin-bottom: 43px;
 }
 
+.heading p {
+    text-align: center;
+}
+
 .title {
     font-weight: 700;
     font-size: 54px;
