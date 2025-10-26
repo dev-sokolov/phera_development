@@ -74,6 +74,7 @@ main {
 
 .block {
     display: flex;
+    /* flex-wrap: wrap; */
     gap: 30px;
 }
 
@@ -84,6 +85,8 @@ main {
     display: flex;
     flex-direction: column;
     background-color: #FFFFFF;
+    /* width: 272px; */
+    /* flex-wrap: wrap; */
 }
 
 .iconWrap {
@@ -160,6 +163,7 @@ main {
 
 .number {
     width: 32px;
+    min-width: 32px;
     height: 32px;
     background-color: #004855;
     border-radius: 50%;
@@ -172,4 +176,68 @@ main {
     color: #FFFFFF;
     font-size: 16px;
     font-weight: 600;
+}
+
+/* -------------- 768px -------------------- */
+
+@media (max-width: 768px) {
+    .block {
+        flex-wrap: wrap;
+    }
+
+    .blockItem {
+        width: 100%;
+    }
+
+    .blockItem h4 {
+        font-size: 18px;
+    }
+
+    .blockItem p {
+        font-size: 16px;
+    }
+
+    .item h4 {
+        font-size: 18px;
+    }
+
+    .item p {
+        font-size: 16px;
+    }
+}
+
+/* -------------- 393px -------------------- */
+
+@media (max-width: 393px) {
+    .title {
+        font-size: 40px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+    }
+
+    .wrapBtn {
+        flex-direction: column;
+    }
+
+    .blockItem h4 {
+        font-size: 16px;
+    }
+
+    .blockItem p {
+        font-size: 14px;
+    }
+
+    .description h3 {
+        font-size: 22px;
+    }
+
+    .item h4 {
+        font-size: 16px;
+    }
+
+    .item p {
+        font-size: 14px;
+    }
 }
