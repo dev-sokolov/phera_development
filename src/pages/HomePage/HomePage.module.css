@@ -15,6 +15,21 @@
     margin-top: 30px;
 }
 
+.btn {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+    border-radius: 12px;
+    background-color: #00303D;
+    padding: 12px 31px;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #00303de6;
+}
+
 .wrapCamera {
     display: flex;
     flex-direction: column;
@@ -49,7 +64,7 @@
 /* -------------- 768px -------------------- */
 
 @media (max-width: 768px) {
-        .footer p{
+    .footer p {
         font-size: 16px;
     }
 }
@@ -57,7 +72,7 @@
 /* -------------- 393px -------------------- */
 
 @media (max-width: 393px) {
-        .footer p{
+    .footer p {
         font-size: 14px;
     }
 }

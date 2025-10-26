@@ -69,8 +69,8 @@ const HomePage = () => {
                         />
                     </div>
                     <div className={styles.wrapBtn}>
-                        <Button onClick={handleCapture}>Scan pH strip</Button>
-                        <Button onClick={handleStopCamera}>Home</Button>
+                        <button className={styles.btn} onClick={handleCapture}>Scan pH strip</button>
+                        <button className={styles.btn} onClick={handleStopCamera}>Home</button>
                     </div>
                 </div>
             )}
