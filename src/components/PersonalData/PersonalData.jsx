@@ -1,5 +1,4 @@
-// import { useRef } from "react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import AgeDropdown from "../AgeDropdown/AgeDropdown";
 import HormoneDropdown from "../HormoneDropdown/HormoneDropdown";
 import RecommendationBox from "../RecommendationBox/RecommendationBox";
@@ -10,21 +9,6 @@ import styles from "./PersonalData.module.css";
 
 const PersonalData = ({ isActive, age, setAge, hormone, setHormone, ancestral, setAncestral }) => {
     const dropdownRef = useRef(null);
-    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-    const [showTooltip, setShowTooltip] = useState(false);
-
-    const handleMouseMove = (e) => {
-        if (!isActive) {
-            const rect = dropdownRef.current.getBoundingClientRect();
-            setTooltipPos({
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            });
-        }
-    };
-
-    const handleMouseEnter = () => !isActive && setShowTooltip(true);
-    const handleMouseLeave = () => setShowTooltip(false);
 
     const handleHormoneChange = (value) => {
         setHormone((prev) =>
@@ -53,7 +37,7 @@ const PersonalData = ({ isActive, age, setAge, hormone, setHormone, ancestral, s
     return (
         <>
             {/* <div className={styles.wrapper} ref={dropdownRef}> */}
-            {/* <div className={`${styles.wrapper} ${!isActive ? styles.inactive : ""}`} ref={dropdownRef}>
+            <div className={`${styles.wrapper} ${!isActive ? styles.inactive : ""}`} ref={dropdownRef}>
                 <h3 className={styles.heading}>
                     Share data to get more personalised results (Optional)
                 </h3>
@@ -71,47 +55,9 @@ const PersonalData = ({ isActive, age, setAge, hormone, setHormone, ancestral, s
                         onChange={handleAncestralChange}
                         onRemove={handleAncestralRemove}
                     />
-                    <Symptoms isActive={isActive} />
+                    <Symptoms isActive={isActive}/>
                 </form>
-                {!isActive && <div className={styles.tooltip}>Click 'Share Data' to fill in your information</div>}
-            </div>
-            <RecommendationBox age={age} hormone={hormone} ancestral={ancestral} /> */}
-
-            <div
-                className={styles.wrapper}
-                ref={dropdownRef}
-                onMouseMove={handleMouseMove}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-            >
-                <h3 className={styles.heading}>
-                    Share data to get more personalised results (Optional)
-                </h3>
-                <form className={styles.form}>
-                    <AgeDropdown isActive={isActive} age={age} onSelect={setAge} />
-                    <HormoneDropdown
-                        isActive={isActive}
-                        hormone={hormone}
-                        onChange={handleHormoneChange}
-                        onRemove={handleHormoneRemove}
-                    />
-                    <AncestralDropdown
-                        isActive={isActive}
-                        ancestral={ancestral}
-                        onChange={handleAncestralChange}
-                        onRemove={handleAncestralRemove}
-                    />
-                    <Symptoms isActive={isActive} />
-                </form>
-
-                {showTooltip && (
-                    <div
-                        className={styles.tooltip}
-                        style={{ left: tooltipPos.x, top: tooltipPos.y }}
-                    >
-                        Share Data' to fill in your information
-                    </div>
-                )}
+                 {!isActive && <div className={styles.tooltip}>Click 'Share Data' to fill in your information</div>}
             </div>
             <RecommendationBox age={age} hormone={hormone} ancestral={ancestral} />
         </>
