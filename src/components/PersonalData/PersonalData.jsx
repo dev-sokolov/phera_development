@@ -109,7 +109,7 @@ const PersonalData = ({ isActive, age, setAge, hormone, setHormone, ancestral, s
                         className={styles.tooltip}
                         style={{ left: tooltipPos.x, top: tooltipPos.y }}
                     >
-                        Click "Share Data"
+                        Share Data' to fill in your information
                     </div>
                 )}
             </div>
