@@ -36,7 +36,8 @@ const PersonalData = ({ isActive, age, setAge, hormone, setHormone, ancestral, s
 
     return (
         <>
-            <div className={styles.wrapper} ref={dropdownRef}>
+            {/* <div className={styles.wrapper} ref={dropdownRef}> */}
+            <div className={`${styles.wrapper} ${!isActive ? styles.inactive : ""}`} ref={dropdownRef}>
                 <h3 className={styles.heading}>
                     Share data to get more personalised results (Optional)
                 </h3>
@@ -56,6 +57,7 @@ const PersonalData = ({ isActive, age, setAge, hormone, setHormone, ancestral, s
                     />
                     <Symptoms isActive={isActive}/>
                 </form>
+                 {!isActive && <div className={styles.tooltip}>Click 'Share Data' to fill in your information</div>}
             </div>
             <RecommendationBox age={age} hormone={hormone} ancestral={ancestral} />
         </>

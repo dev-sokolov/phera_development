@@ -1,4 +1,4 @@
-.wrapper {
+/* .wrapper {
     width: 100%;
     background-color: #FFFFFF;
     padding: 24px;
@@ -9,5 +9,71 @@
     margin-bottom: 16px;
     color: #1D2530;
     font-weight: 600;
+} */
+
+/* ----------------------- */
+
+/* .wrapper {
+    width: 100%;
+    background-color: #FFFFFF;
+    padding: 24px;
+    border-radius: 15px;
+    position: relative;
 }
 
+.heading {
+    margin-bottom: 16px;
+    color: #1D2530;
+    font-weight: 600;
+}
+
+.wrapper.inactive:hover::after {
+    content: "Click 'Share Data'";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    pointer-events: none; 
+} */
+
+.wrapper {
+  width: 100%;
+  background-color: #FFFFFF;
+  padding: 24px;
+  border-radius: 15px;
+  position: relative; /* важно для позиционирования tooltip */
+}
+
+.heading {
+  margin-bottom: 16px;
+  color: #1D2530;
+  font-weight: 600;
+}
+
+.inactive:hover .tooltip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tooltip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #FFFFFF;
+  color: #1D2530;
+  padding: 8px 14px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+  z-index: 50;
+}
