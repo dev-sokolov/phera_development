@@ -44,68 +44,6 @@
     z-index: 3;
 }
 
-.viewfinder {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 80vw;
-    height: 50vh;
-    transform: translate(-50%, -50%);
-    border-radius: 20px;
-    background: transparent;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.2);
-    z-index: 3;
-}
-
-.viewfinder::before,
-.viewfinder::after {
-    content: "";
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border: 3px solid #fff;
-}
-
-.viewfinder::before {
-    top: 0;
-    left: 0;
-    border-bottom: none;
-    border-right: none;
-    border-top-left-radius: 15px;
-}
-
-.viewfinder::after {
-    top: 0;
-    right: 0;
-    border-bottom: none;
-    border-left: none;
-    border-top-right-radius: 15px;
-}
-
-.viewfinder .bottom-left,
-.viewfinder .bottom-right {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border: 3px solid #fff;
-}
-
-.viewfinder .bottom-left {
-    bottom: 0;
-    left: 0;
-    border-top: none;
-    border-right: none;
-    border-bottom-left-radius: 15px;
-}
-
-.viewfinder .bottom-right {
-    bottom: 0;
-    right: 0;
-    border-top: none;
-    border-left: none;
-    border-bottom-right-radius: 15px;
-}
-
 .wrapBtn {
     position: absolute;
     bottom: 40px;
@@ -163,6 +101,8 @@
 
 /* ------------------------------------------------------------ */
 
+
+
 .viewfinder {
   position: absolute;
   top: 50%;
@@ -174,22 +114,54 @@
   background: transparent;
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.2);
   z-index: 3;
-  transition: border-color 0.4s, box-shadow 0.4s;
 }
 
+/* Уголки */
 .viewfinder::before,
 .viewfinder::after,
 .viewfinder .bottom-left,
 .viewfinder .bottom-right {
-  border: 3px solid #fff;
-  transition: border-color 0.4s;
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #fff; /* только внешние линии */
+  box-sizing: border-box;
 }
 
-/* Когда pH-полоска найдена */
-.viewfinder.detected::before,
-.viewfinder.detected::after,
-.viewfinder.detected .bottom-left,
-.viewfinder.detected .bottom-right {
-  border-color: #f8e12e; /* ярко-жёлтый */
+/* Верхний левый угол */
+.viewfinder::before {
+  top: 0;
+  left: 0;
+  border-bottom: none;
+  border-right: none;
+  border-top-left-radius: 15px;
+}
+
+/* Верхний правый угол */
+.viewfinder::after {
+  top: 0;
+  right: 0;
+  border-bottom: none;
+  border-left: none;
+  border-top-right-radius: 15px;
+}
+
+/* Нижний левый угол */
+.viewfinder .bottom-left {
+  bottom: 0;
+  left: 0;
+  border-top: none;
+  border-right: none;
+  border-bottom-left-radius: 15px;
+}
+
+/* Нижний правый угол */
+.viewfinder .bottom-right {
+  bottom: 0;
+  right: 0;
+  border-top: none;
+  border-left: none;
+  border-bottom-right-radius: 15px;
 }
 
