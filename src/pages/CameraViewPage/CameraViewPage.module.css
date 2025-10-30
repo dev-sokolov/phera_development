@@ -37,8 +37,8 @@
     background-color: #00303de6;
 } */
 
-
-.cameraContainer {
+/* ------------------------------------------- */
+/* .cameraContainer {
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -46,7 +46,6 @@
     overflow: hidden;
 }
 
-/* Само видео */
 .webcamVideo {
     position: absolute;
     top: 0;
@@ -54,7 +53,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-}
+} */
 
 /* .overlay {
   position: absolute;
@@ -76,7 +75,7 @@
   background: transparent;
 } */
 
-.overlay {
+/* .overlay {
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -84,29 +83,23 @@
     justify-content: center;
     align-items: center;
     z-index: 5;
-}
+} */
 
 /* "Окно" с плавным затемнением вокруг */
-.viewfinder {
+/* .viewfinder {
     position: relative;
     width: 80vw;
     height: 50vh;
     border-radius: 20px;
     background: radial-gradient(circle at center,
             rgba(0, 0, 0, 0) 60%,
-            /* центр — полностью прозрачный */
             rgba(0, 0, 0, 0.3) 80%,
-            /* плавный переход */
             rgba(0, 0, 0, 0.6) 100%
-            /* по краям — мягкое затемнение */
         );
     outline: 2px solid rgba(255, 255, 255, 0.4);
-    /* белая подсветка рамки */
     backdrop-filter: blur(1px);
-    /* лёгкое размытие — добавляет глубину */
 }
 
-/* Кнопки */
 .wrapBtn {
     position: absolute;
     bottom: 40px;
@@ -131,7 +124,6 @@
     background-color: #00303de6;
 }
 
-/* эффект мягкого появления камеры */
 
 .viewfinder {
   animation: fadeIn 0.8s ease-out;
@@ -140,7 +132,7 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(1.05); }
   to { opacity: 1; transform: scale(1); }
-}
+} */
 
 /* .webcamVideo {
   opacity: 0;
@@ -152,3 +144,69 @@
     opacity: 1;
   }
 } */
+
+.cameraContainer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Камера */
+.webcamVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* Полупрозрачное затемнение с прозрачным окном */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.viewfinder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80vw;
+  height: 50vh;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  box-shadow: 
+    0 0 0 9999px rgba(0, 0, 0, 0.6); /* затемнение вокруг окна */
+  outline: 2px solid rgba(255, 255, 255, 0.4); /* белая рамка вокруг окна */
+}
+
+/* Кнопки управления */
+.wrapBtn {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  z-index: 3;
+}
+
+.btn {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  border-radius: 12px;
+  background-color: #00303d;
+  padding: 12px 31px;
+  font-family: system-ui, sans-serif;
+  cursor: pointer;
+  border: none;
+}
+
+.btn:hover {
+  background-color: #00303de6;
+}
