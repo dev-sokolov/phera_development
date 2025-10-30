@@ -189,7 +189,7 @@
   transform: translate(-50%, -50%);
   border-radius: 20px;
   background: transparent;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
   z-index: 3;
 }
 
