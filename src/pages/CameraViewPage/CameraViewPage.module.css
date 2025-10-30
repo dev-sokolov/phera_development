@@ -145,6 +145,9 @@
   }
 } */
 
+/* ------------------------------------------ */
+
+
 .cameraContainer {
   position: relative;
   width: 100vw;
@@ -152,7 +155,7 @@
   overflow: hidden;
 }
 
-/* Камера */
+/* Видео камеры */
 .webcamVideo {
   position: absolute;
   top: 0;
@@ -160,31 +163,33 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 1;
 }
 
-/* Полупрозрачное затемнение с прозрачным окном */
+/* Общий overlay с мягким затемнением */
 .overlay {
   position: absolute;
   inset: 0;
-  z-index: 2;
   pointer-events: none;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2;
 }
 
+/* Прозрачное окно (viewfinder) */
 .viewfinder {
   position: absolute;
   top: 50%;
   left: 50%;
   width: 80vw;
   height: 50vh;
-  transform: translate(-50%, -50%);
   border-radius: 20px;
-  box-shadow: 
-    0 0 0 9999px rgba(0, 0, 0, 0.6); /* затемнение вокруг окна */
-  outline: 2px solid rgba(255, 255, 255, 0.4); /* белая рамка вокруг окна */
+  transform: translate(-50%, -50%);
+  background: transparent;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  z-index: 3;
 }
 
-/* Кнопки управления */
+/* Кнопки */
 .wrapBtn {
   position: absolute;
   bottom: 40px;
@@ -192,7 +197,7 @@
   display: flex;
   justify-content: center;
   gap: 20px;
-  z-index: 3;
+  z-index: 4; /* выше затемнения */
 }
 
 .btn {
@@ -204,7 +209,6 @@
   padding: 12px 31px;
   font-family: system-ui, sans-serif;
   cursor: pointer;
-  border: none;
 }
 
 .btn:hover {
