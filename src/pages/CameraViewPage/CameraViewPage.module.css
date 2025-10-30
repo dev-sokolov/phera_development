@@ -1,157 +1,3 @@
-/* .wrapCamera {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.webcam {
-    height: 60vh;
-    overflow: hidden;
-    margin-top: 50px;
-}
-
-.webcam video {
-    width: 100%;
-    height: 100%;
-}
-
-.wrapBtn {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 30px;
-}
-
-.btn {
-    font-size: 18px;
-    font-weight: 600;
-    color: #FFFFFF;
-    border-radius: 12px;
-    background-color: #00303D;
-    padding: 12px 31px;
-    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    cursor: pointer;
-}
-
-.btn:hover {
-    background-color: #00303de6;
-} */
-
-/* ------------------------------------------- */
-/* .cameraContainer {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden;
-}
-
-.webcamVideo {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-} */
-
-/* .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.viewfinder {
-  width: 80vw;
-  height: 50vh;
-  border-radius: 20px;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6); 
-  background: transparent;
-} */
-
-/* .overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 5;
-} */
-
-/* "Окно" с плавным затемнением вокруг */
-/* .viewfinder {
-    position: relative;
-    width: 80vw;
-    height: 50vh;
-    border-radius: 20px;
-    background: radial-gradient(circle at center,
-            rgba(0, 0, 0, 0) 60%,
-            rgba(0, 0, 0, 0.3) 80%,
-            rgba(0, 0, 0, 0.6) 100%
-        );
-    outline: 2px solid rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(1px);
-}
-
-.wrapBtn {
-    position: absolute;
-    bottom: 40px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.btn {
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffffff;
-    border-radius: 12px;
-    background-color: #00303d;
-    padding: 12px 31px;
-    font-family: system-ui, sans-serif;
-    cursor: pointer;
-}
-
-.btn:hover {
-    background-color: #00303de6;
-}
-
-
-.viewfinder {
-  animation: fadeIn 0.8s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(1.05); }
-  to { opacity: 1; transform: scale(1); }
-} */
-
-/* .webcamVideo {
-  opacity: 0;
-  animation: fadeIn 0.8s forwards;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-} */
-
-/* ------------------------------------------ */
-
-
-
-
-/* --------------------- */
-
 .cameraContainer {
     position: relative;
     width: 100vw;
@@ -159,10 +5,8 @@
     height: 100dvh;
     overflow: hidden;
     background-color: black;
-    /* подстраховка */
 }
 
-/* Тёмный фон-заглушка до готовности камеры */
 .darkBackground {
     position: absolute;
     top: 0;
@@ -173,7 +17,6 @@
     z-index: 1;
 }
 
-/* Видео камеры */
 .webcamVideo {
     position: absolute;
     top: 0;
@@ -183,29 +26,24 @@
     object-fit: cover;
     opacity: 0;
     transition: opacity 0.6s ease-in;
-    /* плавное появление */
 }
 
 .webcamVideo.show {
     opacity: 1;
 }
 
-/* Общий overlay */
-
-/* Overlay остаётся поверх */
 .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 3;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
 }
 
-/* Прозрачное окно */
 .viewfinder {
     position: absolute;
     top: 50%;
@@ -219,7 +57,6 @@
     z-index: 3;
 }
 
-/* --- Уголки рамки --- */
 .viewfinder::before,
 .viewfinder::after {
     content: "";
@@ -229,7 +66,6 @@
     border: 3px solid #fff;
 }
 
-/* Верхний левый */
 .viewfinder::before {
     top: 0;
     left: 0;
@@ -238,7 +74,6 @@
     border-top-left-radius: 15px;
 }
 
-/* Верхний правый */
 .viewfinder::after {
     top: 0;
     right: 0;
@@ -247,7 +82,6 @@
     border-top-right-radius: 15px;
 }
 
-/* Нижние уголки через дополнительные элементы */
 .viewfinder .bottom-left,
 .viewfinder .bottom-right {
     position: absolute;
@@ -272,7 +106,6 @@
     border-bottom-right-radius: 15px;
 }
 
-/* Кнопки */
 .wrapBtn {
     position: absolute;
     bottom: 40px;
@@ -299,31 +132,64 @@
 }
 
 .spinnerOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  color: white;
-  font-size: 18px;
-  font-weight: 500;
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .spinner {
-  width: 60px;
-  height: 60px;
-  border: 6px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
+    width: 60px;
+    height: 60px;
+    border: 6px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+    to {
+        transform: rotate(360deg);
+    }
 }
+
+/* ------------------------------------------------------------ */
+
+.viewfinder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80vw;
+  height: 50vh;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  background: transparent;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.2);
+  z-index: 3;
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+
+.viewfinder::before,
+.viewfinder::after,
+.viewfinder .bottom-left,
+.viewfinder .bottom-right {
+  border: 3px solid #fff;
+  transition: border-color 0.4s;
+}
+
+/* Когда pH-полоска найдена */
+.viewfinder.detected::before,
+.viewfinder.detected::after,
+.viewfinder.detected .bottom-left,
+.viewfinder.detected .bottom-right {
+  border-color: #f8e12e; /* ярко-жёлтый */
+}
+
