@@ -72,6 +72,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         screenshotFormat="image/png"
         videoConstraints={{ facingMode: "environment" }}
         className={styles.webcamVideo}
+        playsInline
       />
 
       {/* Затемнение поверх камеры */}
