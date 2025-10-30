@@ -209,7 +209,7 @@
   left: 0;
   border-bottom: none;
   border-right: none;
-  border-top-left-radius: 20px;
+  border-top-left-radius: 15px;
 }
 
 /* Верхний правый */
@@ -218,7 +218,7 @@
   right: 0;
   border-bottom: none;
   border-left: none;
-  border-top-right-radius: 20px;
+  border-top-right-radius: 15px;
 }
 
 /* Нижние уголки через дополнительные элементы */
@@ -235,7 +235,7 @@
   left: 0;
   border-top: none;
   border-right: none;
-  border-bottom-left-radius: 20px;
+  border-bottom-left-radius: 15px;
 }
 
 .viewfinder .bottom-right {
@@ -243,7 +243,7 @@
   right: 0;
   border-top: none;
   border-left: none;
-  border-bottom-right-radius: 20px;
+  border-bottom-right-radius: 15px;
 }
 
 /* Кнопки */
