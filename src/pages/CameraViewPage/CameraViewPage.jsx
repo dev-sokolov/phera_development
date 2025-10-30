@@ -48,45 +48,48 @@ import Webcam from "react-webcam";
 import styles from "./CameraViewPage.module.css";
 
 const CameraViewPage = ({ onCapture, onExit }) => {
-  const webcamRef = useRef(null);
+    const webcamRef = useRef(null);
 
-  const stopCamera = () => {
-    const video = webcamRef.current?.video;
-    const tracks = video?.srcObject?.getTracks();
-    tracks?.forEach((track) => track.stop());
-  };
+    const stopCamera = () => {
+        const video = webcamRef.current?.video;
+        const tracks = video?.srcObject?.getTracks();
+        tracks?.forEach((track) => track.stop());
+    };
 
-  const handleCapture = () => {
-    const imageSrc = webcamRef.current?.getScreenshot();
-    stopCamera();
-    if (imageSrc) onCapture(imageSrc);
-  };
+    const handleCapture = () => {
+        const imageSrc = webcamRef.current?.getScreenshot();
+        stopCamera();
+        if (imageSrc) onCapture(imageSrc);
+    };
 
-  useEffect(() => stopCamera, []);
+    useEffect(() => stopCamera, []);
 
-  return (
-    <div className={styles.cameraContainer}>
-      <Webcam
-        ref={webcamRef}
-        audio={false}
-        screenshotFormat="image/png"
-        videoConstraints={{ facingMode: "environment" }}
-        className={styles.webcamVideo}
-        playsInline
-      />
+    return (
+        <div className={styles.cameraContainer}>
+            <Webcam
+                ref={webcamRef}
+                audio={false}
+                screenshotFormat="image/png"
+                videoConstraints={{ facingMode: "environment" }}
+                className={styles.webcamVideo}
+                playsInline
+            />
 
-      {/* Затемнение поверх камеры */}
-      <div className={styles.overlay}>
-        <div className={styles.viewfinder}></div>
-      </div>
+            {/* Затемнение поверх камеры */}
+            <div className={styles.overlay}>
+                <div className={styles.viewfinder}>
+                    <div className={styles["bottom-left"]}></div>
+                    <div className={styles["bottom-right"]}></div>
+                </div>
+            </div>
 
-      {/* Кнопки под окном */}
-      <div className={styles.wrapBtn}>
-        <button className={styles.btn} onClick={handleCapture}>Scan pH strip</button>
-        <button className={styles.btn} onClick={() => { stopCamera(); onExit(); }}>Home</button>
-      </div>
-    </div>
-  );
+            {/* Кнопки под окном */}
+            <div className={styles.wrapBtn}>
+                <button className={styles.btn} onClick={handleCapture}>Scan pH strip</button>
+                <button className={styles.btn} onClick={() => { stopCamera(); onExit(); }}>Home</button>
+            </div>
+        </div>
+    );
 };
 
 export default CameraViewPage;

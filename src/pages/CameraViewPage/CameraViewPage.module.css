@@ -148,10 +148,15 @@
 /* ------------------------------------------ */
 
 
+
+
+/* --------------------- */
+
 .cameraContainer {
   position: relative;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -165,28 +170,80 @@
   object-fit: cover;
 }
 
-/* Общий overlay с мягким затемнением */
+/* Общий overlay */
 .overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* background: rgba(0, 0, 0, 0.6); */
+  /* background: rgba(0, 0, 0, 0.55);  */
   z-index: 2;
 }
 
-/* Прозрачное окно (viewfinder) */
+/* Прозрачное окно */
 .viewfinder {
   position: absolute;
   top: 50%;
   left: 50%;
   width: 80vw;
   height: 50vh;
-  border-radius: 20px;
   transform: translate(-50%, -50%);
+  border-radius: 20px;
   background: transparent;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
-  outline: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
   z-index: 3;
+}
+
+/* --- Уголки рамки --- */
+.viewfinder::before,
+.viewfinder::after {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #fff;
+}
+
+/* Верхний левый */
+.viewfinder::before {
+  top: 0;
+  left: 0;
+  border-bottom: none;
+  border-right: none;
+  border-top-left-radius: 20px;
+}
+
+/* Верхний правый */
+.viewfinder::after {
+  top: 0;
+  right: 0;
+  border-bottom: none;
+  border-left: none;
+  border-top-right-radius: 20px;
+}
+
+/* Нижние уголки через дополнительные элементы */
+.viewfinder .bottom-left,
+.viewfinder .bottom-right {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #fff;
+}
+
+.viewfinder .bottom-left {
+  bottom: 0;
+  left: 0;
+  border-top: none;
+  border-right: none;
+  border-bottom-left-radius: 20px;
+}
+
+.viewfinder .bottom-right {
+  bottom: 0;
+  right: 0;
+  border-top: none;
+  border-left: none;
+  border-bottom-right-radius: 20px;
 }
 
 /* Кнопки */
@@ -197,7 +254,7 @@
   display: flex;
   justify-content: center;
   gap: 20px;
-  z-index: 4; /* выше затемнения */
+  z-index: 4;
 }
 
 .btn {
