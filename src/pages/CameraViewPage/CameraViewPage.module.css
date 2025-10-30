@@ -1,0 +1,104 @@
+/* .wrapCamera {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.webcam {
+    height: 60vh;
+    overflow: hidden;
+    margin-top: 50px;
+}
+
+.webcam video {
+    width: 100%;
+    height: 100%;
+}
+
+.wrapBtn {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.btn {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+    border-radius: 12px;
+    background-color: #00303D;
+    padding: 12px 31px;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #00303de6;
+} */
+
+
+.cameraContainer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Само видео */
+.webcamVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Затемнение */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* чтобы клики проходили сквозь */
+  background: rgba(0, 0, 0, 0.5); /* общее затемнение */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* "Окно" прозрачности */
+.viewfinder {
+  width: 80vw;
+  height: 50vh;
+  border-radius: 20px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6); /* магия затемнения вокруг */
+  background: transparent;
+}
+
+/* Кнопки */
+.wrapBtn {
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.btn {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  border-radius: 12px;
+  background-color: #00303d;
+  padding: 12px 31px;
+  font-family: system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #00303de6;
+}

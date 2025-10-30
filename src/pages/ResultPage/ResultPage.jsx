@@ -24,6 +24,8 @@ const ResultPage = () => {
 
     // Получаем переданные данные
     const { capturedImage } = location.state || {}; //////////////////////////
+    // console.log(capturedImage);
+    
 
     useEffect(() => {
         if (!capturedImage) {

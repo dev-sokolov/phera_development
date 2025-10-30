@@ -1,99 +1,8 @@
-/* .wrapper {
-    width: 100%;
-    background-color: #FFFFFF;
-    padding: 24px;
-    border-radius: 15px;
-}
-
-.heading {
-    margin-bottom: 16px;
-    color: #1D2530;
-    font-weight: 600;
-} */
-
-/* ----------------------- */
-
-/* .wrapper {
-    width: 100%;
-    background-color: #FFFFFF;
-    padding: 24px;
-    border-radius: 15px;
-    position: relative;
-}
-
-.heading {
-    margin-bottom: 16px;
-    color: #1D2530;
-    font-weight: 600;
-}
-
-.wrapper.inactive:hover::after {
-    content: "Click 'Share Data'";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0,0,0,0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 8px;
-    white-space: nowrap;
-    pointer-events: none; 
-} */
-
-/* -------------------------- */
-/* .wrapper {
-    width: 100%;
-    background-color: #FFFFFF;
-    padding: 24px;
-    border-radius: 15px;
-    position: relative;
-}
-
-.heading {
-    margin-bottom: 16px;
-    color: #1D2530;
-    font-weight: 600;
-}
-
-.inactive:hover .tooltip {
-    opacity: 1;
-    pointer-events: auto;
-    background-color: #FFFFFF;
-}
-
-.inactive:hover .wrapper {
-    background-color: red;
-}
-
-.tooltip {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #FFFFFF;
-    color: #1D2530;
-    padding: 15px 20px;
-    border-radius: 12px;
-    box-shadow: 0 6px 30px rgba(102, 102, 100, 0.896);
-    font-size: 16px;
-    font-weight: 600;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-in-out;
-    z-index: 50;
-} */
-
-/* ------------------- */
-
 .wrapper {
     width: 100%;
     background-color: #FFFFFF;
     padding: 24px;
     border-radius: 15px;
-    position: relative;
-    transition: background-color 0.3s ease;
 }
 
 .heading {
@@ -102,29 +11,4 @@
     font-weight: 600;
 }
 
-/* Ненавязчивое уведомление */
-.hint {
-    position: absolute;
-    bottom: -48px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #fff;
-    color: #1D2530;
-    border: 1px solid #E0E0E0;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    padding: 10px 18px;
-    font-size: 13px;
-    text-align: center;
-    white-space: normal;
-    width: max-content;
-    max-width: 90%;
-    animation: fadeInOut 2.5s ease;
-    z-index: 20;
-}
 
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    10%, 80% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-}
