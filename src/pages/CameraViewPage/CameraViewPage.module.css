@@ -170,7 +170,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0.6);
+  /* background: rgba(0, 0, 0, 0.6); */
   z-index: 2;
 }
 
@@ -184,7 +184,7 @@
   border-radius: 20px;
   transform: translate(-50%, -50%);
   background: transparent;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
   outline: 2px solid rgba(255, 255, 255, 0.4);
   z-index: 3;
 }
