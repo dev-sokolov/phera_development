@@ -103,3 +103,16 @@
 .btn:hover {
   background-color: #00303de6;
 }
+
+/* эффект мягкого появления камеры */
+
+.webcamVideo {
+  opacity: 0;
+  animation: fadeIn 0.8s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
