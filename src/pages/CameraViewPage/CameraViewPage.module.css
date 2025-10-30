@@ -158,6 +158,19 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
+    background-color: black;
+    /* подстраховка */
+}
+
+/* Тёмный фон-заглушка до готовности камеры */
+.darkBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    z-index: 1;
 }
 
 /* Видео камеры */
@@ -169,7 +182,7 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transition: opacity 0.4s ease-in;
+    transition: opacity 0.6s ease-in;
     /* плавное появление */
 }
 
@@ -178,12 +191,18 @@
 }
 
 /* Общий overlay */
+
+/* Overlay остаётся поверх */
 .overlay {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    /* background: rgba(0, 0, 0, 0.55);  */
-    z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
 }
 
 /* Прозрачное окно */
