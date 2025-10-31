@@ -2,6 +2,8 @@ import { useRef, useEffect, useState } from "react";
 import Webcam from "react-webcam";
 import styles from "./CameraViewPage.module.css";
 import clickSoundFile from "../../assets/sounds/camera-click.mp3";
+import notificationSound from "../../assets/sounds/notification.mp3";
+
 
 const CameraViewPage = ({ onCapture, onExit }) => {
     const webcamRef = useRef(null);
@@ -19,16 +21,38 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         audio.play().catch(() => { });
     };
 
-    const handleCapture = () => {
-        playClickSound();
-        setIsProcessing(true);
+    // const handleCapture = () => {
+    //     playClickSound();
+    //     setIsProcessing(true);
 
-        setTimeout(() => {
-            const imageSrc = webcamRef.current?.getScreenshot();
-            stopCamera();
-            if (imageSrc) onCapture(imageSrc);
-        }, 1500);
-    };
+    //     setTimeout(() => {
+    //         const imageSrc = webcamRef.current?.getScreenshot();
+    //         stopCamera();
+    //         if (imageSrc) onCapture(imageSrc);
+    //     }, 1500);
+    // };
+
+    const handleCapture = async () => {
+  const audio = new Audio(notificationSound);
+  try {
+    await audio.play(); // дождаться старта звука
+  } catch {
+    // если пользователь не разрешил звук — просто продолжаем
+  }
+
+  // Немного подождём (например, 200–300 мс), чтобы звук "прозвучал"
+  await new Promise((r) => setTimeout(r, 650));
+
+  // теперь показываем спиннер
+  setIsProcessing(true);
+
+  // через 1.5 секунды делаем снимок
+  setTimeout(() => {
+    const imageSrc = webcamRef.current?.getScreenshot();
+    stopCamera();
+    if (imageSrc) onCapture(imageSrc);
+  }, 1500);
+};
 
     const handleUserMedia = () => {
         setTimeout(() => setIsReady(true), 150);
