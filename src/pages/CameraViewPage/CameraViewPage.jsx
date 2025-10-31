@@ -115,14 +115,17 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 //     <Lottie animationData={scanning_3} loop={true} />
                 // </div>
                 <div className={styles.lottieOverlay}>
-                    <Lottie
-                        animationData={processing}
-                        // loop={true}
-                        // loop={false}
-                        speed={0.6}
-                        // style={{ width: "80vw", height: "50vh" }}
-                        style={{ width: "60px", height: "60px" }}
-                    />
+                    <div className={styles.wrapBtn}>
+                        <Lottie
+                            animationData={processing}
+                            // loop={true}
+                            // loop={false}
+                            speed={0.6}
+                            // style={{ width: "80vw", height: "50vh" }}
+                            style={{ width: "60px", height: "60px" }}
+                        />
+                    </div>
+
                     <p className={styles.scanText}>Analyzing pH strip...</p>
                 </div>
             )}
