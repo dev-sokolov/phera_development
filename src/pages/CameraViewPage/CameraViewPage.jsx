@@ -117,7 +117,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 <div className={styles.lottieOverlay}>
                     <Lottie
                         animationData={processing}
-                        loop={true}
+                        // loop={true}
                         // loop={false}
                         speed={0.6}
                         // style={{ width: "80vw", height: "50vh" }}
