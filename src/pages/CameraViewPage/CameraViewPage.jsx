@@ -8,7 +8,9 @@ import scanning from "../../assets/lottie/scanning.json";
 import scanning_2 from "../../assets/lottie/scanning_2.json";
 import scanning_3 from "../../assets/lottie/scanning_3.json";
 import scanning_4 from "../../assets/lottie/scanning_4.json";
+import processing from "../../assets/lottie/processing.json";
 // import scanning_55 from "../../assets/lottie/scanning_55.lottie";
+import cross from "../../assets/icons/cross.png";
 
 
 
@@ -91,8 +93,9 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                     }}
                     aria-label="Exit to home"
                 >
+                    {/* <img src={cross} alt="cross" /> */}
                     {/* ⬅ */}
-                    x
+                    X
                 </button>
             </div>
 
@@ -113,10 +116,12 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 // </div>
                 <div className={styles.lottieOverlay}>
                     <Lottie
-                        animationData={scanning}
+                        animationData={processing}
                         loop={true}
-                        speed={0.1}
-                        style={{ width: "80vw", height: "50vh" }}
+                        // loop={false}
+                        speed={0.6}
+                        // style={{ width: "80vw", height: "50vh" }}
+                        style={{ width: "60px", height: "60px" }}
                     />
                     <p className={styles.scanText}>Analyzing pH strip...</p>
                 </div>
