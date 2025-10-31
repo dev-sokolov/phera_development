@@ -95,7 +95,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 //     <p>Analyzing pH strip...</p>
                 // </div>   
                 <div className={styles.lottieOverlay}>
-                    <Lottie animationData={scanning} loop={true} />
+                    <Lottie animationData={scanning_4} loop={true} />
                 </div>
             )}
 
