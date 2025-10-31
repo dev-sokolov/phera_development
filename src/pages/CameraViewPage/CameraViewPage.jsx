@@ -82,30 +82,57 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 onUserMedia={handleUserMedia}
                 playsInline
             />
+            <div className={styles.topControls}>
+                <button
+                    className={styles.exitBtn}
+                    onClick={() => {
+                        stopCamera();
+                        onExit();
+                    }}
+                    aria-label="Exit to home"
+                >
+                    {/* ⬅ */}
+                    x
+                </button>
+            </div>
+
             <div className={styles.overlay}>
                 <div className={styles.viewfinder}>
                     <div className={styles["bottom-left"]}></div>
                     <div className={styles["bottom-right"]}></div>
                 </div>
-            </div>
 
+            </div>
             {isProcessing && (
                 // <div className={styles.spinnerOverlay}>
                 //     <div className={styles.spinner}></div>
                 //     <p>Analyzing pH strip...</p>
                 // </div>   
+                // <div className={styles.lottieOverlay}>
+                //     <Lottie animationData={scanning_3} loop={true} />
+                // </div>
                 <div className={styles.lottieOverlay}>
-                    <Lottie animationData={scanning_4} loop={true} />
+                    <Lottie
+                        animationData={scanning}
+                        loop={true}
+                        speed={0.1}
+                        style={{ width: "80vw", height: "50vh" }}
+                    />
+                    <p className={styles.scanText}>Analyzing pH strip...</p>
                 </div>
             )}
 
             <div className={styles.wrapBtn}>
                 {!isProcessing && (
                     <>
-                        <button className={styles.btn} onClick={handleCapture}>
+                        {/* <button className={styles.btn} onClick={handleCapture}>
                             Scan pH strip
+                        </button> */}
+                        <button className={styles.scanBtn} onClick={handleCapture}>
+
                         </button>
-                        <button
+
+                        {/* <button
                             className={styles.btn}
                             onClick={() => {
                                 stopCamera();
@@ -113,7 +140,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                             }}
                         >
                             Home
-                        </button>
+                        </button> */}
                     </>
                 )}
             </div>
