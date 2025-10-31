@@ -9,6 +9,7 @@ import scanning_2 from "../../assets/lottie/scanning_2.json";
 import scanning_3 from "../../assets/lottie/scanning_3.json";
 import scanning_4 from "../../assets/lottie/scanning_4.json";
 import processing from "../../assets/lottie/processing.json";
+import processing_2 from "../../assets/lottie/processing_2.json";
 // import scanning_55 from "../../assets/lottie/scanning_55.lottie";
 import cross from "../../assets/icons/cross.png";
 
@@ -64,6 +65,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     // };
 
     const handleUserMedia = () => {
+        // setTimeout(() => setIsReady(true), 150);
         setTimeout(() => setIsReady(true), 150);
     };
 
@@ -117,16 +119,16 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 <div className={styles.lottieOverlay}>
                     <div className={styles.wrapBtn}>
                         <Lottie
-                            animationData={processing}
+                            animationData={processing_2}
                             // loop={true}
                             // loop={false}
-                            speed={0.2}
+                            // speed={0.2}
                             // style={{ width: "80vw", height: "50vh" }}
                             style={{ width: "60px", height: "60px" }}
                         />
                     </div>
 
-                    <p className={styles.scanText}>Analyzing pH strip...</p>
+                    {/* <p className={styles.scanText}>Analyzing pH strip...</p> */}
                 </div>
             )}
 
