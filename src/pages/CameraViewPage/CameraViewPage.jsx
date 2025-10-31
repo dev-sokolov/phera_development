@@ -10,6 +10,8 @@ import scanning_3 from "../../assets/lottie/scanning_3.json";
 import scanning_4 from "../../assets/lottie/scanning_4.json";
 import processing from "../../assets/lottie/processing.json";
 import processing_2 from "../../assets/lottie/processing_2.json";
+import processing_3 from "../../assets/lottie/processing_3.json";
+import processing_4 from "../../assets/lottie/processing_4.json";
 // import scanning_55 from "../../assets/lottie/scanning_55.lottie";
 import cross from "../../assets/icons/cross.png";
 
@@ -119,12 +121,12 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 <div className={styles.lottieOverlay}>
                     <div className={styles.wrapBtn}>
                         <Lottie
-                            animationData={processing_2}
+                            animationData={processing_3}
                             // loop={true}
                             // loop={false}
                             // speed={0.2}
                             // style={{ width: "80vw", height: "50vh" }}
-                            style={{ width: "60px", height: "60px" }}
+                            style={{ width: "120px", height: "120px" }}
                         />
                     </div>
 
