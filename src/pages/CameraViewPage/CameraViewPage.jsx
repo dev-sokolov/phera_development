@@ -120,7 +120,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                             animationData={processing}
                             // loop={true}
                             // loop={false}
-                            speed={0.6}
+                            speed={0.2}
                             // style={{ width: "80vw", height: "50vh" }}
                             style={{ width: "60px", height: "60px" }}
                         />
