@@ -17,42 +17,42 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     };
 
     const playClickSound = () => {
-        const audio = new Audio(clickSoundFile);
+        const audio = new Audio(notificationSound);
         audio.play().catch(() => { });
     };
 
-    // const handleCapture = () => {
-    //     playClickSound();
-    //     setIsProcessing(true);
+    const handleCapture = () => {
+        playClickSound();
+        setIsProcessing(true);
 
-    //     setTimeout(() => {
-    //         const imageSrc = webcamRef.current?.getScreenshot();
-    //         stopCamera();
-    //         if (imageSrc) onCapture(imageSrc);
-    //     }, 1500);
-    // };
+        setTimeout(() => {
+            const imageSrc = webcamRef.current?.getScreenshot();
+            stopCamera();
+            if (imageSrc) onCapture(imageSrc);
+        }, 1500);
+    };
 
-    const handleCapture = async () => {
-  const audio = new Audio(notificationSound);
-  try {
-    await audio.play(); // дождаться старта звука
-  } catch {
-    // если пользователь не разрешил звук — просто продолжаем
-  }
+//     const handleCapture = async () => {
+//   const audio = new Audio(notificationSound);
+//   try {
+//     await audio.play(); // дождаться старта звука
+//   } catch {
+//     // если пользователь не разрешил звук — просто продолжаем
+//   }
 
-  // Немного подождём (например, 200–300 мс), чтобы звук "прозвучал"
-  await new Promise((r) => setTimeout(r, 650));
+//   // Немного подождём (например, 200–300 мс), чтобы звук "прозвучал"
+//   await new Promise((r) => setTimeout(r, 650));
 
-  // теперь показываем спиннер
-  setIsProcessing(true);
+//   // теперь показываем спиннер
+//   setIsProcessing(true);
 
-  // через 1.5 секунды делаем снимок
-  setTimeout(() => {
-    const imageSrc = webcamRef.current?.getScreenshot();
-    stopCamera();
-    if (imageSrc) onCapture(imageSrc);
-  }, 1500);
-};
+//   // через 1.5 секунды делаем снимок
+//   setTimeout(() => {
+//     const imageSrc = webcamRef.current?.getScreenshot();
+//     stopCamera();
+//     if (imageSrc) onCapture(imageSrc);
+//   }, 1500);
+// };
 
     const handleUserMedia = () => {
         setTimeout(() => setIsReady(true), 150);
