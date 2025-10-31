@@ -108,54 +108,45 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                     <div className={styles["bottom-left"]}></div>
                     <div className={styles["bottom-right"]}></div>
                 </div>
-
             </div>
-            {isProcessing && (
-                // <div className={styles.spinnerOverlay}>
-                //     <div className={styles.spinner}></div>
-                //     <p>Analyzing pH strip...</p>
-                // </div>   
-                // <div className={styles.lottieOverlay}>
-                //     <Lottie animationData={scanning_3} loop={true} />
-                // </div>
-                <div className={styles.lottieOverlay}>
-                    <div className={styles.wrapBtn}>
-                        <Lottie
-                            animationData={processing_3}
-                            // loop={true}
-                            // loop={false}
-                            // speed={0.2}
-                            // style={{ width: "80vw", height: "50vh" }}
-                            style={{ width: "120px", height: "120px" }}
-                        />
-                    </div>
 
-                    {/* <p className={styles.scanText}>Analyzing pH strip...</p> */}
-                </div>
-            )}
+            {/* <div className={styles.wrapBtn}>
+                {!isProcessing && (
+                    <button className={styles.scanBtn} onClick={handleCapture}></button>
+                )}
+                {isProcessing && (
+                    <Lottie
+                        animationData={processing_3}
+                        loop={true}
+                        style={{ width: "70px", height: "70px" }}
+                    />
+                )}
+            </div> */}
 
             <div className={styles.wrapBtn}>
-                {!isProcessing && (
-                    <>
-                        {/* <button className={styles.btn} onClick={handleCapture}>
-                            Scan pH strip
-                        </button> */}
-                        <button className={styles.scanBtn} onClick={handleCapture}>
+                <button
+                    className={styles.scanBtn}
+                    onClick={handleCapture}
+                    style={{ opacity: isProcessing ? 0 : 1 }}
+                ></button>
 
-                        </button>
-
-                        {/* <button
-                            className={styles.btn}
-                            onClick={() => {
-                                stopCamera();
-                                onExit();
-                            }}
-                        >
-                            Home
-                        </button> */}
-                    </>
-                )}
+                <Lottie
+                    animationData={processing_3}
+                    // loop={true}
+                    style={{
+                        width: "220px",
+                        height: "220px",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        opacity: isProcessing ? 1 : 0,
+                        pointerEvents: "none",
+                    }}
+                />
             </div>
+
+
         </div>
     );
 };
