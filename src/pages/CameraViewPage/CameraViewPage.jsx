@@ -32,27 +32,27 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         }, 1500);
     };
 
-//     const handleCapture = async () => {
-//   const audio = new Audio(notificationSound);
-//   try {
-//     await audio.play(); // дождаться старта звука
-//   } catch {
-//     // если пользователь не разрешил звук — просто продолжаем
-//   }
+    //     const handleCapture = async () => {
+    //   const audio = new Audio(notificationSound);
+    //   try {
+    //     await audio.play(); // дождаться старта звука
+    //   } catch {
+    //     // если пользователь не разрешил звук — просто продолжаем
+    //   }
 
-//   // Немного подождём (например, 200–300 мс), чтобы звук "прозвучал"
-//   await new Promise((r) => setTimeout(r, 650));
+    //   // Немного подождём (например, 200–300 мс), чтобы звук "прозвучал"
+    //   await new Promise((r) => setTimeout(r, 650));
 
-//   // теперь показываем спиннер
-//   setIsProcessing(true);
+    //   // теперь показываем спиннер
+    //   setIsProcessing(true);
 
-//   // через 1.5 секунды делаем снимок
-//   setTimeout(() => {
-//     const imageSrc = webcamRef.current?.getScreenshot();
-//     stopCamera();
-//     if (imageSrc) onCapture(imageSrc);
-//   }, 1500);
-// };
+    //   // через 1.5 секунды делаем снимок
+    //   setTimeout(() => {
+    //     const imageSrc = webcamRef.current?.getScreenshot();
+    //     stopCamera();
+    //     if (imageSrc) onCapture(imageSrc);
+    //   }, 1500);
+    // };
 
     const handleUserMedia = () => {
         setTimeout(() => setIsReady(true), 150);
@@ -119,9 +119,13 @@ const CameraViewPage = ({ onCapture, onExit }) => {
             </div>
 
             {isProcessing && (
-                <div className={styles.spinnerOverlay}>
-                    <div className={styles.spinner}></div>
-                    <p>Analyzing pH strip...</p>
+                // <div className={styles.spinnerOverlay}>
+                //     <div className={styles.spinner}></div>
+                //     <p>Analyzing pH strip...</p>
+                // </div>
+                <div className={styles.scanOverlay} role="status" aria-live="polite">
+                    <div className={styles.scanLine} />
+                    <p className={styles.scanText}>Analyzing pH strip...</p>
                 </div>
             )}
 
