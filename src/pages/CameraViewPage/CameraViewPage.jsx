@@ -36,8 +36,11 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     };
 
     const handleCapture = () => {
-        playClickSound();
         setIsProcessing(true);
+
+        setTimeout(() => {
+            playClickSound();
+        }, 1500)
 
         setTimeout(() => {
             const imageSrc = webcamRef.current?.getScreenshot();
