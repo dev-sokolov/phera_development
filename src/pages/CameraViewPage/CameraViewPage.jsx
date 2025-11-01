@@ -12,6 +12,7 @@ import processing from "../../assets/lottie/processing.json";
 import processing_2 from "../../assets/lottie/processing_2.json";
 import processing_3 from "../../assets/lottie/processing_3.json";
 import processing_4 from "../../assets/lottie/processing_4.json";
+import processing_5 from "../../assets/lottie/processing_5.json";
 // import scanning_55 from "../../assets/lottie/scanning_55.lottie";
 import cross from "../../assets/icons/cross.png";
 
@@ -131,11 +132,11 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 ></button>
 
                 <Lottie
-                    animationData={processing_3}
+                    animationData={processing_5}
                     // loop={true}
                     style={{
-                        width: "220px",
-                        height: "220px",
+                        width: "120px",
+                        height: "120px",
                         position: "absolute",
                         top: "50%",
                         left: "50%",
