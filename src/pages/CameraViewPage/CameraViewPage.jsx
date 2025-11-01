@@ -40,7 +40,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
 
         setTimeout(() => {
             playClickSound();
-        }, 1500)
+        }, 1400)
 
         setTimeout(() => {
             const imageSrc = webcamRef.current?.getScreenshot();
