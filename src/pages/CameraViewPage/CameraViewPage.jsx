@@ -32,17 +32,73 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         audio.play().catch(() => { });
     };
 
+    // const handleCapture = () => {
+    //     setIsProcessing(true);
+
+    //     setTimeout(() => {
+    //         playClickSound();
+    //     }, 1000)
+
+    //     setTimeout(() => {
+    //         const imageSrc = webcamRef.current?.getScreenshot();
+    //         stopCamera();
+    //         if (imageSrc) onCapture(imageSrc);
+    //     }, 2300);
+    // };
+
+    // ----------------------
+
     const handleCapture = () => {
         setIsProcessing(true);
 
         setTimeout(() => {
             playClickSound();
-        }, 1000)
+        }, 1000);
 
         setTimeout(() => {
             const imageSrc = webcamRef.current?.getScreenshot();
-            stopCamera();
-            if (imageSrc) onCapture(imageSrc);
+            if (!imageSrc) return;
+
+            // Создаём объект Image, чтобы можно было обрезать
+            const img = new Image();
+            img.src = imageSrc;
+
+            img.onload = () => {
+                // Создаём временный canvas
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                // 🔧 Координаты и размер области обрезки
+                // Здесь тебе нужно подобрать значения под твоё расположение полоски в кадре.
+                // Например, если полоска по центру:
+                // const cropX = img.width * 0.25; // отступ слева
+                // const cropY = img.height * 0.4; // отступ сверху
+                // const cropWidth = img.width * 0.5; // ширина обрезки
+                // const cropHeight = img.height * 0.2; // высота обрезки
+
+                const cropX = img.width * 0.43; 
+                const cropY = img.height * 0.24;
+                const cropWidth = img.width * 0.14; //общ
+                const cropHeight = img.height * 0.3;
+
+                // Настраиваем canvas под размер обрезанной области
+                canvas.width = cropWidth;
+                canvas.height = cropHeight;
+
+                // Копируем нужную часть из исходного изображения
+                ctx.drawImage(
+                    img,
+                    cropX, cropY, cropWidth, cropHeight,
+                    0, 0, cropWidth, cropHeight
+                );
+
+                // Получаем итоговое изображение
+                const croppedImage = canvas.toDataURL("image/png");
+
+                stopCamera();
+                onCapture(croppedImage); // передаём обрезанный снимок
+                console.log(img.width, img.height);
+            };
         }, 2300);
     };
 
@@ -81,6 +137,9 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 <div className={styles.viewfinder}>
                     <div className={styles["bottom-left"]}></div>
                     <div className={styles["bottom-right"]}></div>
+
+                    {/* 🔲 Новая рамка для обрезки */}
+                    <div className={styles.cropFrame}></div>
                 </div>
             </div>
             <div className={styles.wrapBtn}>
