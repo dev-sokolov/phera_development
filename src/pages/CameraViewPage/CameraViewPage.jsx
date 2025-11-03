@@ -351,6 +351,8 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //     }, 2300);
     //   };
 
+    // ------------------------------------
+
     const handleCapture = () => {
         setIsProcessing(true);
 
@@ -426,6 +428,106 @@ const CameraViewPage = ({ onCapture, onExit }) => {
             };
         }, 2300);
     };
+
+    // -----------------------------------------------------------
+
+    // const handleCapture = () => {
+    //     setIsProcessing(true);
+
+    //     setTimeout(() => playClickSound(), 1000);
+
+    //     setTimeout(() => {
+    //         const video = webcamRef.current?.video;
+    //         if (!video) return;
+
+    //         // 1️⃣ Захват кадра напрямую из видео
+    //         const canvas = document.createElement("canvas");
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         const ctx = canvas.getContext("2d");
+    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    //         // 2️⃣ Инициализация OpenCV.js
+    //         const src = cv.matFromImageData(imgData);
+    //         const gray = new cv.Mat();
+    //         const blurred = new cv.Mat();
+    //         const edged = new cv.Mat();
+
+    //         // 3️⃣ Преобразуем в серое и применяем размытие + детектор границ
+    //         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    //         cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
+    //         cv.Canny(blurred, edged, 50, 150);
+
+    //         // 4️⃣ Находим контуры
+    //         const contours = new cv.MatVector();
+    //         const hierarchy = new cv.Mat();
+    //         cv.findContours(edged, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+    //         let maxArea = 0;
+    //         let bestRect = null;
+
+    //         // 5️⃣ Ищем самый большой прямоугольный контур (тест-полоска)------------
+    //         for (let i = 0; i < contours.size(); i++) {
+    //             const cnt = contours.get(i);
+    //             const approx = new cv.Mat();
+    //             cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+    //             if (approx.rows === 4) {
+    //                 const area = cv.contourArea(approx);
+    //                 if (area > maxArea) {
+    //                     maxArea = area;
+    //                     bestRect = approx;
+    //                 }
+    //             }
+    //             approx.delete();
+    //             cnt.delete();
+    //         }
+
+    //         // 6️⃣ Если нашли прямоугольник, обрезаем
+    //         if (bestRect) {
+    //             // Получаем координаты вершин
+    //             const points = [];
+    //             for (let i = 0; i < 4; i++) {
+    //                 points.push({
+    //                     x: bestRect.intPtr(i, 0)[0],
+    //                     y: bestRect.intPtr(i, 0)[1],
+    //                 });
+    //             }
+
+    //             // Находим bounding box
+    //             const x = Math.min(...points.map(p => p.x));
+    //             const y = Math.min(...points.map(p => p.y));
+    //             const w = Math.max(...points.map(p => p.x)) - x;
+    //             const h = Math.max(...points.map(p => p.y)) - y;
+
+    //             // Обрезаем на canvas
+    //             const croppedCanvas = document.createElement("canvas");
+    //             croppedCanvas.width = w;
+    //             croppedCanvas.height = h;
+    //             const croppedCtx = croppedCanvas.getContext("2d");
+    //             croppedCtx.drawImage(canvas, x, y, w, h, 0, 0, w, h);
+
+    //             const croppedImage = croppedCanvas.toDataURL("image/png");
+    //             onCapture(croppedImage);
+    //         } else {
+    //             // Если прямоугольник не найден — можно вернуть весь кадр или показать ошибку
+    //             const fallbackImage = canvas.toDataURL("image/png");
+    //             onCapture(fallbackImage);
+    //         }
+
+    //         // 7️⃣ Очистка памяти OpenCV
+    //         src.delete();
+    //         gray.delete();
+    //         blurred.delete();
+    //         edged.delete();
+    //         contours.delete();
+    //         hierarchy.delete();
+
+    //         stopCamera();
+    //     }, 2300);
+    // };
 
     const handleUserMedia = () => {
         // camera ready
