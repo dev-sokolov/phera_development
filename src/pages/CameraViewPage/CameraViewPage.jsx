@@ -253,179 +253,255 @@ import notificationSound from "../../assets/sounds/notification.mp3";
 import processing_6 from "../../assets/lottie/processing_6.json";
 
 const CameraViewPage = ({ onCapture, onExit }) => {
-  const webcamRef = useRef(null);
-  const frameRef = useRef(null); // ref для cropFrame
-  const [isReady, setIsReady] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+    const webcamRef = useRef(null);
+    const frameRef = useRef(null); // ref для cropFrame
+    const [isReady, setIsReady] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
 
-  const stopCamera = () => {
-    const video = webcamRef.current?.video;
-    const tracks = video?.srcObject?.getTracks();
-    tracks?.forEach((track) => track.stop());
-  };
-
-  const playClickSound = () => {
-    const audio = new Audio(notificationSound);
-    audio.play().catch(() => {});
-  };
-
-  const handleCapture = () => {
-    setIsProcessing(true);
-    setTimeout(() => playClickSound(), 1000);
-
-    // Задержка имитирует анимацию/процессинг
-    setTimeout(() => {
-      // Берём снимок (dataURL) — можно заменить на захват из video для лучшего разрешения
-      const imageSrc = webcamRef.current?.getScreenshot();
-      if (!imageSrc) {
-        setIsProcessing(false);
-        return;
-      }
-
-      const img = new Image();
-      img.src = imageSrc;
-
-      img.onload = () => {
-        // Получаем video элемент — он должен быть уже доступен, т.к. мы вызываем capture
+    const stopCamera = () => {
         const video = webcamRef.current?.video;
-        const frameEl = frameRef.current;
-        if (!video || !frameEl) {
-          // Без video/frame ничего не делаем
-          setIsProcessing(false);
-          return;
-        }
+        const tracks = video?.srcObject?.getTracks();
+        tracks?.forEach((track) => track.stop());
+    };
 
-        // Получаем прямоугольники в координатах окна
-        const videoRect = video.getBoundingClientRect();
-        const frameRect = frameEl.getBoundingClientRect();
+    const playClickSound = () => {
+        const audio = new Audio(notificationSound);
+        audio.play().catch(() => { });
+    };
 
-        // Вычисляем относительные координаты рамки внутри видео area
-        // clamp — чтобы не выйти за границы
-        const relX = Math.max(0, Math.min(1, (frameRect.left - videoRect.left) / videoRect.width));
-        const relY = Math.max(0, Math.min(1, (frameRect.top - videoRect.top) / videoRect.height));
-        const relW = Math.max(0, Math.min(1, frameRect.width / videoRect.width));
-        const relH = Math.max(0, Math.min(1, frameRect.height / videoRect.height));
+    //   const handleCapture = () => {  //!!!!!!!!!!!!! работает
+    //     setIsProcessing(true);
+    //     setTimeout(() => playClickSound(), 1000);
 
-        // Переводим в координаты пикселей исходного изображения (img.width / img.height)
-        const cropX = Math.round(img.width * relX);
-        const cropY = Math.round(img.height * relY);
-        const cropWidth = Math.round(img.width * relW);
-        const cropHeight = Math.round(img.height * relH);
+    //     // Задержка имитирует анимацию/процессинг
+    //     setTimeout(() => {
+    //       // Берём снимок (dataURL) — можно заменить на захват из video для лучшего разрешения
+    //       const imageSrc = webcamRef.current?.getScreenshot();
+    //       if (!imageSrc) {
+    //         setIsProcessing(false);
+    //         return;
+    //       }
 
-        // Если cropWidth/Height 0 — отмена
-        if (cropWidth <= 0 || cropHeight <= 0) {
-          setIsProcessing(false);
-          return;
-        }
+    //       const img = new Image();
+    //       img.src = imageSrc;
 
-        // Создаём canvas, отключаем сглаживание (если нужно)
-        const canvas = document.createElement("canvas");
-        canvas.width = cropWidth;
-        canvas.height = cropHeight;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.imageSmoothingEnabled = false;
-          ctx.drawImage(
-            img,
-            cropX,
-            cropY,
-            cropWidth,
-            cropHeight,
-            0,
-            0,
-            cropWidth,
-            cropHeight
-          );
-        }
+    //       img.onload = () => {
+    //         // Получаем video элемент — он должен быть уже доступен, т.к. мы вызываем capture
+    //         const video = webcamRef.current?.video;
+    //         const frameEl = frameRef.current;
+    //         if (!video || !frameEl) {
+    //           // Без video/frame ничего не делаем
+    //           setIsProcessing(false);
+    //           return;
+    //         }
 
-        const croppedImage = canvas.toDataURL("image/png");
-        stopCamera();
-        onCapture(croppedImage);
-        setIsProcessing(false);
-      };
+    //         // Получаем прямоугольники в координатах окна
+    //         const videoRect = video.getBoundingClientRect();
+    //         const frameRect = frameEl.getBoundingClientRect();
 
-      img.onerror = () => {
-        // Если по какой-то причине картинка не загрузилась
-        setIsProcessing(false);
-      };
-    }, 2300);
-  };
+    //         // Вычисляем относительные координаты рамки внутри видео area
+    //         // clamp — чтобы не выйти за границы
+    //         const relX = Math.max(0, Math.min(1, (frameRect.left - videoRect.left) / videoRect.width));
+    //         const relY = Math.max(0, Math.min(1, (frameRect.top - videoRect.top) / videoRect.height));
+    //         const relW = Math.max(0, Math.min(1, frameRect.width / videoRect.width));
+    //         const relH = Math.max(0, Math.min(1, frameRect.height / videoRect.height));
 
-  const handleUserMedia = () => {
-    // camera ready
-    setTimeout(() => setIsReady(true), 150);
-  };
+    //         // Переводим в координаты пикселей исходного изображения (img.width / img.height)
+    //         const cropX = Math.round(img.width * relX);
+    //         const cropY = Math.round(img.height * relY);
+    //         const cropWidth = Math.round(img.width * relW);
+    //         const cropHeight = Math.round(img.height * relH);
 
-  useEffect(() => {
-    // при размонтировании останавливаем камеру
-    return () => stopCamera();
-  }, []);
+    //         // Если cropWidth/Height 0 — отмена
+    //         if (cropWidth <= 0 || cropHeight <= 0) {
+    //           setIsProcessing(false);
+    //           return;
+    //         }
 
-  return (
-    <div className={styles.cameraContainer}>
-      {!isReady && <div className={styles.darkBackground}></div>}
-      <Webcam
-        ref={webcamRef}
-        audio={false}
-        screenshotFormat="image/png"
-        videoConstraints={{
-          facingMode: "environment",
-          width: { ideal: 1920 }, // можно попросить более высокое разрешение
-          height: { ideal: 1080 },
-        }}
-        className={`${styles.webcamVideo} ${isReady ? styles.show : ""}`}
-        onUserMedia={handleUserMedia}
-        playsInline
-      />
-      <div className={styles.topControls}>
-        <button
-          className={styles.exitBtn}
-          onClick={() => {
-            stopCamera();
-            onExit();
-          }}
-          aria-label="Exit to home"
-        >
-          X
-        </button>
-      </div>
+    //         // Создаём canvas, отключаем сглаживание (если нужно)
+    //         const canvas = document.createElement("canvas");
+    //         canvas.width = cropWidth;
+    //         canvas.height = cropHeight;
+    //         const ctx = canvas.getContext("2d");
+    //         if (ctx) {
+    //           ctx.imageSmoothingEnabled = false;
+    //           ctx.drawImage(
+    //             img,
+    //             cropX,
+    //             cropY,
+    //             cropWidth,
+    //             cropHeight,
+    //             0,
+    //             0,
+    //             cropWidth,
+    //             cropHeight
+    //           );
+    //         }
 
-      <div className={styles.overlay}>
-        <div className={styles.viewfinder}>
-          <div className={styles["bottom-left"]}></div>
-          <div className={styles["bottom-right"]}></div>
+    //         const croppedImage = canvas.toDataURL("image/png");
+    //         stopCamera();
+    //         onCapture(croppedImage);
+    //         setIsProcessing(false);
+    //       };
 
-          {/* Привязываем ref к cropFrame */}
-          <div ref={frameRef} className={styles.cropFrame}></div>
+    //       img.onerror = () => {
+    //         // Если по какой-то причине картинка не загрузилась
+    //         setIsProcessing(false);
+    //       };
+    //     }, 2300);
+    //   };
+
+    const handleCapture = () => {
+        setIsProcessing(true);
+
+        // 🎵 небольшой звуковой эффект через 1 секунду
+        setTimeout(() => playClickSound(), 1000);
+
+        // ⏳ делаем задержку для анимации (2.3 секунды)
+        setTimeout(() => {
+            const video = webcamRef.current?.video;
+            if (!video) {
+                console.error("Video element not found");
+                setIsProcessing(false);
+                return;
+            }
+
+            // ✅ Захватываем кадр напрямую из видео в полном разрешении
+            const canvasFull = document.createElement("canvas");
+            canvasFull.width = video.videoWidth;
+            canvasFull.height = video.videoHeight;
+
+            const ctxFull = canvasFull.getContext("2d");
+            ctxFull.drawImage(video, 0, 0, canvasFull.width, canvasFull.height);
+
+            // Получаем полное изображение в base64
+            const imageSrc = canvasFull.toDataURL("image/png");
+
+            // Создаём Image, чтобы обрезать нужную часть
+            const img = new Image();
+            img.src = imageSrc;
+
+            img.onload = () => {
+                const frame = document.querySelector(`.${styles.cropFrame}`);
+                if (!frame) {
+                    console.error("Crop frame not found");
+                    setIsProcessing(false);
+                    return;
+                }
+
+                const videoRect = video.getBoundingClientRect();
+                const frameRect = frame.getBoundingClientRect();
+
+                // 📐 Рассчитываем относительные координаты рамки
+                const relX = (frameRect.left - videoRect.left) / videoRect.width;
+                const relY = (frameRect.top - videoRect.top) / videoRect.height;
+                const relW = frameRect.width / videoRect.width;
+                const relH = frameRect.height / videoRect.height;
+
+                // 🔢 Переводим в реальные пиксели изображения
+                const cropX = img.width * relX;
+                const cropY = img.height * relY;
+                const cropWidth = img.width * relW;
+                const cropHeight = img.height * relH;
+
+                // ✂️ Создаём временный canvas под область обрезки
+                const canvasCrop = document.createElement("canvas");
+                canvasCrop.width = cropWidth;
+                canvasCrop.height = cropHeight;
+                const ctxCrop = canvasCrop.getContext("2d");
+
+                ctxCrop.drawImage(
+                    img,
+                    cropX, cropY, cropWidth, cropHeight,
+                    0, 0, cropWidth, cropHeight
+                );
+
+                // 🎨 Получаем финальное обрезанное изображение
+                const croppedImage = canvasCrop.toDataURL("image/png");
+
+                // 🛑 Останавливаем камеру и передаём результат
+                stopCamera();
+                onCapture(croppedImage);
+                setIsProcessing(false);
+            };
+        }, 2300);
+    };
+
+    const handleUserMedia = () => {
+        // camera ready
+        setTimeout(() => setIsReady(true), 150);
+    };
+
+    useEffect(() => {
+        // при размонтировании останавливаем камеру
+        return () => stopCamera();
+    }, []);
+
+    return (
+        <div className={styles.cameraContainer}>
+            {!isReady && <div className={styles.darkBackground}></div>}
+            <Webcam
+                ref={webcamRef}
+                audio={false}
+                screenshotFormat="image/png"
+                videoConstraints={{
+                    facingMode: "environment",
+                    width: { ideal: 1920 }, // можно попросить более высокое разрешение
+                    height: { ideal: 1080 },
+                }}
+                className={`${styles.webcamVideo} ${isReady ? styles.show : ""}`}
+                onUserMedia={handleUserMedia}
+                playsInline
+            />
+            <div className={styles.topControls}>
+                <button
+                    className={styles.exitBtn}
+                    onClick={() => {
+                        stopCamera();
+                        onExit();
+                    }}
+                    aria-label="Exit to home"
+                >
+                    X
+                </button>
+            </div>
+
+            <div className={styles.overlay}>
+                <div className={styles.viewfinder}>
+                    <div className={styles["bottom-left"]}></div>
+                    <div className={styles["bottom-right"]}></div>
+
+                    {/* Привязываем ref к cropFrame */}
+                    <div ref={frameRef} className={styles.cropFrame}></div>
+                </div>
+            </div>
+
+            <div className={styles.wrapBtn}>
+                <button
+                    className={styles.scanBtn}
+                    onClick={handleCapture}
+                    style={{ opacity: isProcessing ? 0 : 1 }}
+                ></button>
+
+                <Lottie
+                    key={isProcessing ? "processing" : "idle"}
+                    animationData={processing_6}
+                    loop={false}
+                    style={{
+                        width: "80px",
+                        height: "80px",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        opacity: isProcessing ? 1 : 0,
+                        pointerEvents: "none",
+                        filter: "brightness(0) invert(1)",
+                    }}
+                />
+            </div>
         </div>
-      </div>
-
-      <div className={styles.wrapBtn}>
-        <button
-          className={styles.scanBtn}
-          onClick={handleCapture}
-          style={{ opacity: isProcessing ? 0 : 1 }}
-        ></button>
-
-        <Lottie
-          key={isProcessing ? "processing" : "idle"}
-          animationData={processing_6}
-          loop={false}
-          style={{
-            width: "80px",
-            height: "80px",
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            opacity: isProcessing ? 1 : 0,
-            pointerEvents: "none",
-            filter: "brightness(0) invert(1)",
-          }}
-        />
-      </div>
-    </div>
-  );
+    );
 };
 
 export default CameraViewPage;
