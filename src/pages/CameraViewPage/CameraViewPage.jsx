@@ -161,152 +161,152 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     // };
 
     // -----------------------------------------------------------
-    // const handleCapture = () => {
-    //     setIsProcessing(true);
-    //     setTimeout(() => playClickSound(), 1000);
+    const handleCapture = () => {
+        setIsProcessing(true);
+        setTimeout(() => playClickSound(), 1000);
 
-    //     setTimeout(() => {
-    //         const video = webcamRef.current?.video;
-    //         if (!video) return;
+        setTimeout(() => {
+            const video = webcamRef.current?.video;
+            if (!video) return;
 
-    //         // 1️⃣ Снимаем кадр с максимальным разрешением
-    //         const canvas = document.createElement("canvas");
-    //         canvas.width = video.videoWidth;
-    //         canvas.height = video.videoHeight;
-    //         const ctx = canvas.getContext("2d");
-    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // 1️⃣ Снимаем кадр с максимальным разрешением
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-    //         // 2️⃣ Загружаем в OpenCV
-    //         const src = cv.matFromImageData(imgData);
-    //         const gray = new cv.Mat();
-    //         const thresh = new cv.Mat();
+            // 2️⃣ Загружаем в OpenCV
+            const src = cv.matFromImageData(imgData);
+            const gray = new cv.Mat();
+            const thresh = new cv.Mat();
 
-    //         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-    //         cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
-    //         cv.adaptiveThreshold(
-    //             gray,
-    //             thresh,
-    //             255,
-    //             cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-    //             cv.THRESH_BINARY_INV,
-    //             11,
-    //             2
-    //         );
+            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+            cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+            cv.adaptiveThreshold(
+                gray,
+                thresh,
+                255,
+                cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+                cv.THRESH_BINARY_INV,
+                11,
+                2
+            );
 
-    //         // 3️⃣ Находим контуры
-    //         const contours = new cv.MatVector();
-    //         const hierarchy = new cv.Mat();
-    //         cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+            // 3️⃣ Находим контуры
+            const contours = new cv.MatVector();
+            const hierarchy = new cv.Mat();
+            cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-    //         const squares = [];
-    //         for (let i = 0; i < contours.size(); i++) {
-    //             const cnt = contours.get(i);
-    //             const approx = new cv.Mat();
-    //             cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+            const squares = [];
+            for (let i = 0; i < contours.size(); i++) {
+                const cnt = contours.get(i);
+                const approx = new cv.Mat();
+                cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
 
-    //             if (approx.rows === 4 && cv.contourArea(approx) > 200) {
-    //                 const rect = cv.boundingRect(approx);
-    //                 const aspect = rect.width / rect.height;
-    //                 if (aspect > 0.8 && aspect < 1.2) squares.push(rect);
-    //             }
+                if (approx.rows === 4 && cv.contourArea(approx) > 200) {
+                    const rect = cv.boundingRect(approx);
+                    const aspect = rect.width / rect.height;
+                    if (aspect > 0.8 && aspect < 1.2) squares.push(rect);
+                }
 
-    //             cnt.delete();
-    //             approx.delete();
-    //         }
+                cnt.delete();
+                approx.delete();
+            }
 
-    //         if (squares.length === 4) {
-    //             squares.sort((a, b) => a.y - b.y || a.x - b.x);
-    //             const topLeft = squares[0];
-    //             const topRight = squares[1];
-    //             const bottomLeft = squares[2];
-    //             const bottomRight = squares[3];
+            if (squares.length === 4) {
+                squares.sort((a, b) => a.y - b.y || a.x - b.x);
+                const topLeft = squares[0];
+                const topRight = squares[1];
+                const bottomLeft = squares[2];
+                const bottomRight = squares[3];
 
-    //             // ✅ вычисляем реальные размеры по маркерам
-    //             const topWidth = Math.hypot(
-    //                 (topRight.x + topRight.width / 2) - (topLeft.x + topLeft.width / 2),
-    //                 (topRight.y + topRight.height / 2) - (topLeft.y + topLeft.height / 2)
-    //             );
-    //             const bottomWidth = Math.hypot(
-    //                 (bottomRight.x + bottomRight.width / 2) - (bottomLeft.x + bottomLeft.width / 2),
-    //                 (bottomRight.y + bottomRight.height / 2) - (bottomLeft.y + bottomLeft.height / 2)
-    //             );
-    //             const leftHeight = Math.hypot(
-    //                 (bottomLeft.x + bottomLeft.width / 2) - (topLeft.x + topLeft.width / 2),
-    //                 (bottomLeft.y + bottomLeft.height / 2) - (topLeft.y + topLeft.height / 2)
-    //             );
-    //             const rightHeight = Math.hypot(
-    //                 (bottomRight.x + bottomRight.width / 2) - (topRight.x + topRight.width / 2),
-    //                 (bottomRight.y + bottomRight.height / 2) - (topRight.y + topRight.height / 2)
-    //             );
+                // ✅ вычисляем реальные размеры по маркерам
+                const topWidth = Math.hypot(
+                    (topRight.x + topRight.width / 2) - (topLeft.x + topLeft.width / 2),
+                    (topRight.y + topRight.height / 2) - (topLeft.y + topLeft.height / 2)
+                );
+                const bottomWidth = Math.hypot(
+                    (bottomRight.x + bottomRight.width / 2) - (bottomLeft.x + bottomLeft.width / 2),
+                    (bottomRight.y + bottomRight.height / 2) - (bottomLeft.y + bottomLeft.height / 2)
+                );
+                const leftHeight = Math.hypot(
+                    (bottomLeft.x + bottomLeft.width / 2) - (topLeft.x + topLeft.width / 2),
+                    (bottomLeft.y + bottomLeft.height / 2) - (topLeft.y + topLeft.height / 2)
+                );
+                const rightHeight = Math.hypot(
+                    (bottomRight.x + bottomRight.width / 2) - (topRight.x + topRight.width / 2),
+                    (bottomRight.y + bottomRight.height / 2) - (topRight.y + topRight.height / 2)
+                );
 
-    //             // усредняем ширину и высоту
-    //             const width = Math.round((topWidth + bottomWidth) / 2);
-    //             const height = Math.round((leftHeight + rightHeight) / 2);
+                // усредняем ширину и высоту
+                const width = Math.round((topWidth + bottomWidth) / 2);
+                const height = Math.round((leftHeight + rightHeight) / 2);
 
-    //             // 4️⃣ точки для преобразования
-    //             const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
-    //                 topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
-    //                 topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
-    //                 bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
-    //                 bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
-    //             ]);
+                // 4️⃣ точки для преобразования
+                const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                    topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
+                    topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
+                    bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
+                    bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
+                ]);
 
-    //             const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
-    //                 0, 0,
-    //                 width, 0,
-    //                 width, height,
-    //                 0, height
-    //             ]);
+                const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                    0, 0,
+                    width, 0,
+                    width, height,
+                    0, height
+                ]);
 
-    //             // 5️⃣ Преобразование перспективы
-    //             const M = cv.getPerspectiveTransform(srcPts, dstPts);
-    //             const warped = new cv.Mat();
-    //             cv.warpPerspective(src, warped, M, new cv.Size(width, height));
+                // 5️⃣ Преобразование перспективы
+                const M = cv.getPerspectiveTransform(srcPts, dstPts);
+                const warped = new cv.Mat();
+                cv.warpPerspective(src, warped, M, new cv.Size(width, height));
 
-    //             // ✂️ Можно взять центральную часть, где находится шкала
-    //             // const cropY = Math.round(height * 0.25);
-    //             // const cropHeight = Math.round(height * 0.5);
-    //             const cropY = Math.round(height * 0.1);
-    //             const cropHeight = Math.round(height * 0.6);
-    //             const cropX = Math.round(width * 0.19);
-    //             const cropWidth = Math.round(width * 0.6);
-    //             const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
+                // ✂️ Можно взять центральную часть, где находится шкала
+                // const cropY = Math.round(height * 0.25);
+                // const cropHeight = Math.round(height * 0.5);
+                const cropY = Math.round(height * 0.1);
+                const cropHeight = Math.round(height * 0.6);
+                const cropX = Math.round(width * 0.19);
+                const cropWidth = Math.round(width * 0.6);
+                const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
 
-    //             // 6️⃣ Конвертируем в Base64
-    //             const outputCanvas = document.createElement("canvas");
-    //             outputCanvas.width = cropWidth;
-    //             outputCanvas.height = cropHeight;
-    //             cv.imshow(outputCanvas, cropped);
-    //             const croppedImage = outputCanvas.toDataURL("image/png");
+                // 6️⃣ Конвертируем в Base64
+                const outputCanvas = document.createElement("canvas");
+                outputCanvas.width = cropWidth;
+                outputCanvas.height = cropHeight;
+                cv.imshow(outputCanvas, cropped);
+                const croppedImage = outputCanvas.toDataURL("image/png");
 
-    //             stopCamera();
-    //             onCapture(croppedImage);
+                stopCamera();
+                onCapture(croppedImage);
 
-    //             // очистка
-    //             cropped.delete();
-    //             warped.delete();
-    //             M.delete();
-    //             srcPts.delete();
-    //             dstPts.delete();
-    //         } else {
-    //             console.warn("⚠️ Не удалось найти 4 маркера. Используем fallback.");
-    //             const fallback = canvas.toDataURL("image/png");
-    //             onCapture(fallback);
-    //         }
+                // очистка
+                cropped.delete();
+                warped.delete();
+                M.delete();
+                srcPts.delete();
+                dstPts.delete();
+            } else {
+                console.warn("⚠️ Не удалось найти 4 маркера. Используем fallback.");
+                const fallback = canvas.toDataURL("image/png");
+                onCapture(fallback);
+            }
 
-    //         // 🧹 Очистка
-    //         src.delete();
-    //         gray.delete();
-    //         thresh.delete();
-    //         contours.delete();
-    //         hierarchy.delete();
+            // 🧹 Очистка
+            src.delete();
+            gray.delete();
+            thresh.delete();
+            contours.delete();
+            hierarchy.delete();
 
-    //         stopCamera();
-    //         setIsProcessing(false);
-    //     }, 2300);
-    // };
+            stopCamera();
+            setIsProcessing(false);
+        }, 2300);
+    };
 
     // ---------------------------------------------
 
@@ -667,113 +667,115 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //     }, 2300);
     // };
 
-    const handleCapture = () => {
-        setIsProcessing(true);
+    // --------------------------------------------------------
 
-        // 🔊 звук через 1 секунду
-        setTimeout(() => playClickSound(), 1000);
+    // const handleCapture = () => {
+    //     setIsProcessing(true);
 
-        // ⏳ задержка под анимацию
-        setTimeout(() => {
-            const video = webcamRef.current?.video;
-            if (!video) return;
+    //     // 🔊 звук через 1 секунду
+    //     setTimeout(() => playClickSound(), 1000);
 
-            // 1️⃣ Захват кадра
-            const canvas = document.createElement("canvas");
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    //     // ⏳ задержка под анимацию
+    //     setTimeout(() => {
+    //         const video = webcamRef.current?.video;
+    //         if (!video) return;
 
-            // 2️⃣ Загружаем в OpenCV
-            const src = cv.matFromImageData(imgData);
-            const gray = new cv.Mat();
-            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-            cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
-            const thresh = new cv.Mat();
-            cv.adaptiveThreshold(gray, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
+    //         // 1️⃣ Захват кадра
+    //         const canvas = document.createElement("canvas");
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         const ctx = canvas.getContext("2d");
+    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-            // 3️⃣ Находим контуры и фильтруем квадраты
-            const contours = new cv.MatVector();
-            const hierarchy = new cv.Mat();
-            cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+    //         // 2️⃣ Загружаем в OpenCV
+    //         const src = cv.matFromImageData(imgData);
+    //         const gray = new cv.Mat();
+    //         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    //         cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+    //         const thresh = new cv.Mat();
+    //         cv.adaptiveThreshold(gray, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
 
-            const squares = [];
-            for (let i = 0; i < contours.size(); i++) {
-                const cnt = contours.get(i);
-                const approx = new cv.Mat();
-                cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+    //         // 3️⃣ Находим контуры и фильтруем квадраты
+    //         const contours = new cv.MatVector();
+    //         const hierarchy = new cv.Mat();
+    //         cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-                if (approx.rows === 4 && cv.contourArea(approx) > 200) {
-                    const rect = cv.boundingRect(approx);
-                    const aspect = rect.width / rect.height;
-                    if (aspect > 0.8 && aspect < 1.2) squares.push(rect);
-                }
+    //         const squares = [];
+    //         for (let i = 0; i < contours.size(); i++) {
+    //             const cnt = contours.get(i);
+    //             const approx = new cv.Mat();
+    //             cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
 
-                cnt.delete();
-                approx.delete();
-            }
+    //             if (approx.rows === 4 && cv.contourArea(approx) > 200) {
+    //                 const rect = cv.boundingRect(approx);
+    //                 const aspect = rect.width / rect.height;
+    //                 if (aspect > 0.8 && aspect < 1.2) squares.push(rect);
+    //             }
 
-            if (squares.length === 4) {
-                // 4️⃣ Выравниваем по маркерам
-                squares.sort((a, b) => a.y - b.y || a.x - b.x);
-                const [topLeft, topRight, bottomLeft, bottomRight] = squares;
+    //             cnt.delete();
+    //             approx.delete();
+    //         }
 
-                const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
-                    topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
-                    topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
-                    bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
-                    bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
-                ]);
+    //         if (squares.length === 4) {
+    //             // 4️⃣ Выравниваем по маркерам
+    //             squares.sort((a, b) => a.y - b.y || a.x - b.x);
+    //             const [topLeft, topRight, bottomLeft, bottomRight] = squares;
 
-                const width = 800;   // фиксированная ширина
-                const height = 1000; // фиксированная высота
-                const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, width, 0, width, height, 0, height]);
+    //             const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    //                 topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
+    //                 topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
+    //                 bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
+    //                 bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
+    //             ]);
 
-                const M = cv.getPerspectiveTransform(srcPts, dstPts);
-                const warped = new cv.Mat();
-                cv.warpPerspective(src, warped, M, new cv.Size(width, height));
+    //             const width = 800;   // фиксированная ширина
+    //             const height = 1000; // фиксированная высота
+    //             const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, width, 0, width, height, 0, height]);
 
-                // 5️⃣ Берём центральную полоску (по вертикали)
-                const cropY = Math.round(height * 0.25);
-                const cropHeight = Math.round(height * 0.5);
-                const cropX = 0;
-                const cropWidth = width;
-                const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
+    //             const M = cv.getPerspectiveTransform(srcPts, dstPts);
+    //             const warped = new cv.Mat();
+    //             cv.warpPerspective(src, warped, M, new cv.Size(width, height));
 
-                // 6️⃣ Конвертируем в Base64
-                const outputCanvas = document.createElement("canvas");
-                outputCanvas.width = cropWidth;
-                outputCanvas.height = cropHeight;
-                cv.imshow(outputCanvas, cropped);
-                const croppedImage = outputCanvas.toDataURL("image/png");
+    //             // 5️⃣ Берём центральную полоску (по вертикали)
+    //             const cropY = Math.round(height * 0.25);
+    //             const cropHeight = Math.round(height * 0.5);
+    //             const cropX = 0;
+    //             const cropWidth = width;
+    //             const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
 
-                // 7️⃣ Очистка
-                cropped.delete();
-                warped.delete();
-                M.delete();
-                srcPts.delete();
-                dstPts.delete();
+    //             // 6️⃣ Конвертируем в Base64
+    //             const outputCanvas = document.createElement("canvas");
+    //             outputCanvas.width = cropWidth;
+    //             outputCanvas.height = cropHeight;
+    //             cv.imshow(outputCanvas, cropped);
+    //             const croppedImage = outputCanvas.toDataURL("image/png");
 
-                stopCamera();
-                onCapture(croppedImage);
-            } else {
-                // fallback: весь кадр
-                console.warn("⚠️ Не удалось найти 4 маркера. Используем fallback.");
-                onCapture(canvas.toDataURL("image/png"));
-            }
+    //             // 7️⃣ Очистка
+    //             cropped.delete();
+    //             warped.delete();
+    //             M.delete();
+    //             srcPts.delete();
+    //             dstPts.delete();
 
-            // 🧹 Очистка
-            src.delete();
-            gray.delete();
-            thresh.delete();
-            contours.delete();
-            hierarchy.delete();
+    //             stopCamera();
+    //             onCapture(croppedImage);
+    //         } else {
+    //             // fallback: весь кадр
+    //             console.warn("⚠️ Не удалось найти 4 маркера. Используем fallback.");
+    //             onCapture(canvas.toDataURL("image/png"));
+    //         }
 
-            setIsProcessing(false);
-        }, 2300);
-    };
+    //         // 🧹 Очистка
+    //         src.delete();
+    //         gray.delete();
+    //         thresh.delete();
+    //         contours.delete();
+    //         hierarchy.delete();
+
+    //         setIsProcessing(false);
+    //     }, 2300);
+    // };
 
     const handleUserMedia = () => {
         // camera ready
