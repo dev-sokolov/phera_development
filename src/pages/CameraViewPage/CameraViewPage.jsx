@@ -22,7 +22,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         audio.play().catch(() => { });
     };
 
-    // const handleCapture = () => {/////////////////////////////!!!!!!!!!работает
+    // const handleCapture = () => {
     //     setIsProcessing(true);
 
     //     // 🔊 звук через 1 секунду
@@ -160,7 +160,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //     }, 2300);
     // };
 
-    // -----------------------------------------------------------
+    // -----------------------------------------------------------+-
     const handleCapture = () => {
         setIsProcessing(true);
         setTimeout(() => playClickSound(), 1000);
