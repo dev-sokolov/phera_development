@@ -160,6 +160,310 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //     }, 2300);
     // };
 
+    // -----------------------------------------------------------
+    // const handleCapture = () => {
+    //     setIsProcessing(true);
+    //     setTimeout(() => playClickSound(), 1000);
+
+    //     setTimeout(() => {
+    //         const video = webcamRef.current?.video;
+    //         if (!video) return;
+
+    //         // 1️⃣ Снимаем кадр с максимальным разрешением
+    //         const canvas = document.createElement("canvas");
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         const ctx = canvas.getContext("2d");
+    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    //         // 2️⃣ Загружаем в OpenCV
+    //         const src = cv.matFromImageData(imgData);
+    //         const gray = new cv.Mat();
+    //         const thresh = new cv.Mat();
+
+    //         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    //         cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+    //         cv.adaptiveThreshold(
+    //             gray,
+    //             thresh,
+    //             255,
+    //             cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+    //             cv.THRESH_BINARY_INV,
+    //             11,
+    //             2
+    //         );
+
+    //         // 3️⃣ Находим контуры
+    //         const contours = new cv.MatVector();
+    //         const hierarchy = new cv.Mat();
+    //         cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+    //         const squares = [];
+    //         for (let i = 0; i < contours.size(); i++) {
+    //             const cnt = contours.get(i);
+    //             const approx = new cv.Mat();
+    //             cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+    //             if (approx.rows === 4 && cv.contourArea(approx) > 200) {
+    //                 const rect = cv.boundingRect(approx);
+    //                 const aspect = rect.width / rect.height;
+    //                 if (aspect > 0.8 && aspect < 1.2) squares.push(rect);
+    //             }
+
+    //             cnt.delete();
+    //             approx.delete();
+    //         }
+
+    //         if (squares.length === 4) {
+    //             squares.sort((a, b) => a.y - b.y || a.x - b.x);
+    //             const topLeft = squares[0];
+    //             const topRight = squares[1];
+    //             const bottomLeft = squares[2];
+    //             const bottomRight = squares[3];
+
+    //             // ✅ вычисляем реальные размеры по маркерам
+    //             const topWidth = Math.hypot(
+    //                 (topRight.x + topRight.width / 2) - (topLeft.x + topLeft.width / 2),
+    //                 (topRight.y + topRight.height / 2) - (topLeft.y + topLeft.height / 2)
+    //             );
+    //             const bottomWidth = Math.hypot(
+    //                 (bottomRight.x + bottomRight.width / 2) - (bottomLeft.x + bottomLeft.width / 2),
+    //                 (bottomRight.y + bottomRight.height / 2) - (bottomLeft.y + bottomLeft.height / 2)
+    //             );
+    //             const leftHeight = Math.hypot(
+    //                 (bottomLeft.x + bottomLeft.width / 2) - (topLeft.x + topLeft.width / 2),
+    //                 (bottomLeft.y + bottomLeft.height / 2) - (topLeft.y + topLeft.height / 2)
+    //             );
+    //             const rightHeight = Math.hypot(
+    //                 (bottomRight.x + bottomRight.width / 2) - (topRight.x + topRight.width / 2),
+    //                 (bottomRight.y + bottomRight.height / 2) - (topRight.y + topRight.height / 2)
+    //             );
+
+    //             // усредняем ширину и высоту
+    //             const width = Math.round((topWidth + bottomWidth) / 2);
+    //             const height = Math.round((leftHeight + rightHeight) / 2);
+
+    //             // 4️⃣ точки для преобразования
+    //             const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    //                 topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
+    //                 topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
+    //                 bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
+    //                 bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
+    //             ]);
+
+    //             const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    //                 0, 0,
+    //                 width, 0,
+    //                 width, height,
+    //                 0, height
+    //             ]);
+
+    //             // 5️⃣ Преобразование перспективы
+    //             const M = cv.getPerspectiveTransform(srcPts, dstPts);
+    //             const warped = new cv.Mat();
+    //             cv.warpPerspective(src, warped, M, new cv.Size(width, height));
+
+    //             // ✂️ Можно взять центральную часть, где находится шкала
+    //             // const cropY = Math.round(height * 0.25);
+    //             // const cropHeight = Math.round(height * 0.5);
+    //             const cropY = Math.round(height * 0.1);
+    //             const cropHeight = Math.round(height * 0.6);
+    //             const cropX = Math.round(width * 0.19);
+    //             const cropWidth = Math.round(width * 0.6);
+    //             const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
+
+    //             // 6️⃣ Конвертируем в Base64
+    //             const outputCanvas = document.createElement("canvas");
+    //             outputCanvas.width = cropWidth;
+    //             outputCanvas.height = cropHeight;
+    //             cv.imshow(outputCanvas, cropped);
+    //             const croppedImage = outputCanvas.toDataURL("image/png");
+
+    //             stopCamera();
+    //             onCapture(croppedImage);
+
+    //             // очистка
+    //             cropped.delete();
+    //             warped.delete();
+    //             M.delete();
+    //             srcPts.delete();
+    //             dstPts.delete();
+    //         } else {
+    //             console.warn("⚠️ Не удалось найти 4 маркера. Используем fallback.");
+    //             const fallback = canvas.toDataURL("image/png");
+    //             onCapture(fallback);
+    //         }
+
+    //         // 🧹 Очистка
+    //         src.delete();
+    //         gray.delete();
+    //         thresh.delete();
+    //         contours.delete();
+    //         hierarchy.delete();
+
+    //         stopCamera();
+    //         setIsProcessing(false);
+    //     }, 2300);
+    // };
+
+    // ---------------------------------------------
+
+    // const handleCapture = () => {
+    //     setIsProcessing(true);
+    //     setTimeout(() => playClickSound(), 1000);
+
+    //     setTimeout(() => {
+    //         const video = webcamRef.current?.video;
+    //         const frame = frameRef.current;
+    //         if (!video || !frame) return;
+
+    //         // 1️⃣ Снимаем кадр с максимальным разрешением
+    //         const canvas = document.createElement("canvas");
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         const ctx = canvas.getContext("2d");
+    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    //         // 2️⃣ Загружаем в OpenCV
+    //         const src = cv.matFromImageData(imgData);
+    //         const gray = new cv.Mat();
+    //         const thresh = new cv.Mat();
+
+    //         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    //         cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+    //         cv.adaptiveThreshold(
+    //             gray,
+    //             thresh,
+    //             255,
+    //             cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+    //             cv.THRESH_BINARY_INV,
+    //             11,
+    //             2
+    //         );
+
+    //         // 3️⃣ Находим контуры маркеров
+    //         const contours = new cv.MatVector();
+    //         const hierarchy = new cv.Mat();
+    //         cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+    //         const squares = [];
+    //         for (let i = 0; i < contours.size(); i++) {
+    //             const cnt = contours.get(i);
+    //             const approx = new cv.Mat();
+    //             cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+    //             if (approx.rows === 4 && cv.contourArea(approx) > 200) {
+    //                 const rect = cv.boundingRect(approx);
+    //                 const aspect = rect.width / rect.height;
+    //                 if (aspect > 0.8 && aspect < 1.2) squares.push(rect);
+    //             }
+
+    //             cnt.delete();
+    //             approx.delete();
+    //         }
+
+    //         let croppedImage;
+
+    //         if (squares.length === 4) {
+    //             // ✅ Если нашли маркеры — делаем выравнивание
+    //             squares.sort((a, b) => a.y - b.y || a.x - b.x);
+    //             const topLeft = squares[0];
+    //             const topRight = squares[1];
+    //             const bottomLeft = squares[2];
+    //             const bottomRight = squares[3];
+
+    //             const topWidth = Math.hypot(
+    //                 (topRight.x + topRight.width / 2) - (topLeft.x + topLeft.width / 2),
+    //                 (topRight.y + topRight.height / 2) - (topLeft.y + topLeft.height / 2)
+    //             );
+    //             const bottomWidth = Math.hypot(
+    //                 (bottomRight.x + bottomRight.width / 2) - (bottomLeft.x + bottomLeft.width / 2),
+    //                 (bottomRight.y + bottomRight.height / 2) - (bottomLeft.y + bottomLeft.height / 2)
+    //             );
+    //             const leftHeight = Math.hypot(
+    //                 (bottomLeft.x + bottomLeft.width / 2) - (topLeft.x + topLeft.width / 2),
+    //                 (bottomLeft.y + bottomLeft.height / 2) - (topLeft.y + topLeft.height / 2)
+    //             );
+    //             const rightHeight = Math.hypot(
+    //                 (bottomRight.x + bottomRight.width / 2) - (topRight.x + topRight.width / 2),
+    //                 (bottomRight.y + bottomRight.height / 2) - (topRight.y + topRight.height / 2)
+    //             );
+
+    //             const width = Math.round((topWidth + bottomWidth) / 2);
+    //             const height = Math.round((leftHeight + rightHeight) / 2);
+
+    //             const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    //                 topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
+    //                 topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
+    //                 bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
+    //                 bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
+    //             ]);
+
+    //             const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    //                 0, 0,
+    //                 width, 0,
+    //                 width, height,
+    //                 0, height
+    //             ]);
+
+    //             const M = cv.getPerspectiveTransform(srcPts, dstPts);
+    //             const warped = new cv.Mat();
+    //             cv.warpPerspective(src, warped, M, new cv.Size(width, height));
+
+    //             // 🔹 Используем реальную рамку cropFrame для обрезки
+    //             const frameRect = frame.getBoundingClientRect();
+    //             const videoRect = video.getBoundingClientRect();
+
+    //             const relX = (frameRect.left - videoRect.left) / videoRect.width;
+    //             const relY = (frameRect.top - videoRect.top) / videoRect.height;
+    //             const relW = frameRect.width / videoRect.width;
+    //             const relH = frameRect.height / videoRect.height;
+
+    //             const cropX = Math.round(width * relX);
+    //             const cropY = Math.round(height * relY);
+    //             const cropWidth = Math.round(width * relW);
+    //             const cropHeight = Math.round(height * relH);
+
+    //             const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
+
+    //             const outputCanvas = document.createElement("canvas");
+    //             outputCanvas.width = cropWidth;
+    //             outputCanvas.height = cropHeight;
+    //             cv.imshow(outputCanvas, cropped);
+    //             croppedImage = outputCanvas.toDataURL("image/png");
+
+    //             // очистка
+    //             cropped.delete();
+    //             warped.delete();
+    //             M.delete();
+    //             srcPts.delete();
+    //             dstPts.delete();
+
+    //         } else {
+    //             console.warn("⚠️ Не удалось найти 4 маркера. Используем fallback.");
+    //             croppedImage = canvas.toDataURL("image/png");
+    //         }
+
+    //         // 🧹 Очистка памяти
+    //         src.delete();
+    //         gray.delete();
+    //         thresh.delete();
+    //         contours.delete();
+    //         hierarchy.delete();
+
+    //         stopCamera();
+    //         setIsProcessing(false);
+    //         onCapture(croppedImage);
+
+    //     }, 2300);
+    // };
+
+    // ---------------------------------------------------
+
+
     const handleCapture = () => {
         setIsProcessing(true);
         setTimeout(() => playClickSound(), 1000);
@@ -168,20 +472,18 @@ const CameraViewPage = ({ onCapture, onExit }) => {
             const video = webcamRef.current?.video;
             if (!video) return;
 
-            // 1️⃣ Снимаем кадр с максимальным разрешением
+            // 1️⃣ Захват кадра
             const canvas = document.createElement("canvas");
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
             // 2️⃣ Загружаем в OpenCV
             const src = cv.matFromImageData(imgData);
             const gray = new cv.Mat();
             const thresh = new cv.Mat();
-
             cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
             cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
             cv.adaptiveThreshold(
@@ -194,10 +496,23 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 2
             );
 
-            // 3️⃣ Находим контуры
+            // 3️⃣ Ограничиваем область поиска рамкой
+            const frameRect = frameRef.current.getBoundingClientRect();
+            const videoRect = video.getBoundingClientRect();
+            const scaleX = video.videoWidth / videoRect.width;
+            const scaleY = video.videoHeight / videoRect.height;
+
+            const roiX = Math.round((frameRect.left - videoRect.left) * scaleX);
+            const roiY = Math.round((frameRect.top - videoRect.top) * scaleY);
+            const roiWidth = Math.round(frameRect.width * scaleX);
+            const roiHeight = Math.round(frameRect.height * scaleY);
+
+            const roi = thresh.roi(new cv.Rect(roiX, roiY, roiWidth, roiHeight));
+
+            // 4️⃣ Находим контуры только внутри ROI
             const contours = new cv.MatVector();
             const hierarchy = new cv.Mat();
-            cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+            cv.findContours(roi, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
             const squares = [];
             for (let i = 0; i < contours.size(); i++) {
@@ -207,6 +522,9 @@ const CameraViewPage = ({ onCapture, onExit }) => {
 
                 if (approx.rows === 4 && cv.contourArea(approx) > 200) {
                     const rect = cv.boundingRect(approx);
+                    rect.x += roiX; // поправка на координаты ROI
+                    rect.y += roiY;
+
                     const aspect = rect.width / rect.height;
                     if (aspect > 0.8 && aspect < 1.2) squares.push(rect);
                 }
@@ -215,43 +533,34 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 approx.delete();
             }
 
+            roi.delete();
+            gray.delete();
+            thresh.delete();
+
             if (squares.length === 4) {
                 squares.sort((a, b) => a.y - b.y || a.x - b.x);
-                const topLeft = squares[0];
-                const topRight = squares[1];
-                const bottomLeft = squares[2];
-                const bottomRight = squares[3];
+                const [topLeft, topRight, bottomLeft, bottomRight] = squares;
 
-                // ✅ вычисляем реальные размеры по маркерам
-                const topWidth = Math.hypot(
-                    (topRight.x + topRight.width / 2) - (topLeft.x + topLeft.width / 2),
-                    (topRight.y + topRight.height / 2) - (topLeft.y + topLeft.height / 2)
-                );
-                const bottomWidth = Math.hypot(
-                    (bottomRight.x + bottomRight.width / 2) - (bottomLeft.x + bottomLeft.width / 2),
-                    (bottomRight.y + bottomRight.height / 2) - (bottomLeft.y + bottomLeft.height / 2)
-                );
-                const leftHeight = Math.hypot(
-                    (bottomLeft.x + bottomLeft.width / 2) - (topLeft.x + topLeft.width / 2),
-                    (bottomLeft.y + bottomLeft.height / 2) - (topLeft.y + topLeft.height / 2)
-                );
-                const rightHeight = Math.hypot(
-                    (bottomRight.x + bottomRight.width / 2) - (topRight.x + topRight.width / 2),
-                    (bottomRight.y + bottomRight.height / 2) - (topRight.y + topRight.height / 2)
-                );
+                // Вычисляем ширину и высоту
+                const topWidth = Math.hypot((topRight.x + topRight.width / 2) - (topLeft.x + topLeft.width / 2),
+                    (topRight.y + topRight.height / 2) - (topLeft.y + topLeft.height / 2));
+                const bottomWidth = Math.hypot((bottomRight.x + bottomRight.width / 2) - (bottomLeft.x + bottomLeft.width / 2),
+                    (bottomRight.y + bottomRight.height / 2) - (bottomLeft.y + bottomLeft.height / 2));
+                const leftHeight = Math.hypot((bottomLeft.x + bottomLeft.width / 2) - (topLeft.x + topLeft.width / 2),
+                    (bottomLeft.y + bottomLeft.height / 2) - (topLeft.y + topLeft.height / 2));
+                const rightHeight = Math.hypot((bottomRight.x + bottomRight.width / 2) - (topRight.x + topRight.width / 2),
+                    (bottomRight.y + bottomRight.height / 2) - (topRight.y + topRight.height / 2));
 
-                // усредняем ширину и высоту
                 const width = Math.round((topWidth + bottomWidth) / 2);
                 const height = Math.round((leftHeight + rightHeight) / 2);
 
-                // 4️⃣ точки для преобразования
+                // Точки для преобразования
                 const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
                     topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
                     topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
                     bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
                     bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
                 ]);
-
                 const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
                     0, 0,
                     width, 0,
@@ -259,21 +568,19 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                     0, height
                 ]);
 
-                // 5️⃣ Преобразование перспективы
+                // Преобразование перспективы
                 const M = cv.getPerspectiveTransform(srcPts, dstPts);
                 const warped = new cv.Mat();
                 cv.warpPerspective(src, warped, M, new cv.Size(width, height));
 
-                // ✂️ Можно взять центральную часть, где находится шкала
-                // const cropY = Math.round(height * 0.25);
-                // const cropHeight = Math.round(height * 0.5);
+                // Кроп центральной части
                 const cropY = Math.round(height * 0.1);
                 const cropHeight = Math.round(height * 0.6);
                 const cropX = Math.round(width * 0.19);
                 const cropWidth = Math.round(width * 0.6);
                 const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
 
-                // 6️⃣ Конвертируем в Base64
+                // Base64 результат
                 const outputCanvas = document.createElement("canvas");
                 outputCanvas.width = cropWidth;
                 outputCanvas.height = cropHeight;
@@ -283,7 +590,6 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 stopCamera();
                 onCapture(croppedImage);
 
-                // очистка
                 cropped.delete();
                 warped.delete();
                 M.delete();
@@ -295,15 +601,12 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 onCapture(fallback);
             }
 
-            // 🧹 Очистка
             src.delete();
-            gray.delete();
-            thresh.delete();
             contours.delete();
             hierarchy.delete();
-
             stopCamera();
             setIsProcessing(false);
+
         }, 2300);
     };
 
