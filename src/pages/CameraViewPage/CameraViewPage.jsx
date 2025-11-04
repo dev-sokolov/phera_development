@@ -1,250 +1,3 @@
-// import { useRef, useEffect, useState } from "react";
-// import Lottie from "lottie-react";
-// import Webcam from "react-webcam";
-// import styles from "./CameraViewPage.module.css";
-// import clickSoundFile from "../../assets/sounds/camera-click.mp3";
-// import notificationSound from "../../assets/sounds/notification.mp3";
-// import scanning from "../../assets/lottie/scanning.json";
-// import scanning_2 from "../../assets/lottie/scanning_2.json";
-// import scanning_3 from "../../assets/lottie/scanning_3.json";
-// import scanning_4 from "../../assets/lottie/scanning_4.json";
-// import processing from "../../assets/lottie/processing.json";
-// import processing_2 from "../../assets/lottie/processing_2.json";
-// import processing_3 from "../../assets/lottie/processing_3.json";
-// import processing_4 from "../../assets/lottie/processing_4.json";
-// import processing_5 from "../../assets/lottie/processing_5.json";
-// import processing_6 from "../../assets/lottie/processing_6.json";
-// import cross from "../../assets/icons/cross.png";
-
-// const CameraViewPage = ({ onCapture, onExit }) => {
-//     const webcamRef = useRef(null);
-//     const [isReady, setIsReady] = useState(false);
-//     const [isProcessing, setIsProcessing] = useState(false);
-
-//     const stopCamera = () => {
-//         const video = webcamRef.current?.video;
-//         const tracks = video?.srcObject?.getTracks();
-//         tracks?.forEach((track) => track.stop());
-//     };
-
-//     const playClickSound = () => {
-//         const audio = new Audio(notificationSound);
-//         audio.play().catch(() => { });
-//     };
-
-//     // const handleCapture = () => {
-//     //     setIsProcessing(true);
-
-//     //     setTimeout(() => {
-//     //         playClickSound();
-//     //     }, 1000)
-
-//     //     setTimeout(() => {
-//     //         const imageSrc = webcamRef.current?.getScreenshot();
-//     //         stopCamera();
-//     //         if (imageSrc) onCapture(imageSrc);
-//     //     }, 2300);
-//     // };
-
-//     // ----------------------
-
-//     const video = webcamRef.current.video;
-//     const videoWidth = video.videoWidth;
-//     const videoHeight = video.videoHeight;
-
-//     const frame = document.querySelector(`.${styles.cropFrame}`);
-//     const videoRect = video.getBoundingClientRect();
-//     const frameRect = frame.getBoundingClientRect();
-
-//     // Получаем пропорции положения рамки внутри видео
-//     const relX = (frameRect.left - videoRect.left) / videoRect.width;
-//     const relY = (frameRect.top - videoRect.top) / videoRect.height;
-//     const relW = frameRect.width / videoRect.width;
-//     const relH = frameRect.height / videoRect.height;
-
-//     // Переводим в реальные координаты изображения
-//     const cropX = img.width * relX;
-//     const cropY = img.height * relY;
-//     const cropWidth = img.width * relW;
-//     const cropHeight = img.height * relH;
-
-//     // const handleCapture = () => {
-//     //     setIsProcessing(true);
-
-//     //     setTimeout(() => {
-//     //         playClickSound();
-//     //     }, 1000);
-
-//     //     setTimeout(() => {
-//     //         const imageSrc = webcamRef.current?.getScreenshot();
-//     //         if (!imageSrc) return;
-
-//     //         // Создаём объект Image, чтобы можно было обрезать
-//     //         const img = new Image();
-//     //         img.src = imageSrc;
-
-//     //         img.onload = () => {
-//     //             // Создаём временный canvas
-//     //             const canvas = document.createElement("canvas");
-//     //             const ctx = canvas.getContext("2d");
-
-//     //             // 🔧 Координаты и размер области обрезки
-//     //             // Здесь тебе нужно подобрать значения под твоё расположение полоски в кадре.
-//     //             // Например, если полоска по центру:
-//     //             // const cropX = img.width * 0.25; // отступ слева
-//     //             // const cropY = img.height * 0.4; // отступ сверху
-//     //             // const cropWidth = img.width * 0.5; // ширина обрезки
-//     //             // const cropHeight = img.height * 0.2; // высота обрезки
-
-//     //             const cropX = img.width * 0.43;
-//     //             const cropY = img.height * 0.24;
-//     //             const cropWidth = img.width * 0.14; //общ
-//     //             const cropHeight = img.height * 0.3;
-
-//     //             // Настраиваем canvas под размер обрезанной области
-//     //             canvas.width = cropWidth;
-//     //             canvas.height = cropHeight;
-
-//     //             // Копируем нужную часть из исходного изображения
-//     //             ctx.drawImage(
-//     //                 img,
-//     //                 cropX, cropY, cropWidth, cropHeight,
-//     //                 0, 0, cropWidth, cropHeight
-//     //             );
-
-//     //             // Получаем итоговое изображение
-//     //             const croppedImage = canvas.toDataURL("image/png");
-
-//     //             stopCamera();
-//     //             onCapture(croppedImage); // передаём обрезанный снимок
-//     //             console.log(img.width, img.height);
-//     //         };
-//     //     }, 2300);
-//     // };
-
-//     const handleCapture = () => {
-//         setIsProcessing(true);
-
-//         setTimeout(() => playClickSound(), 1000);
-
-//         setTimeout(() => {
-//             const imageSrc = webcamRef.current?.getScreenshot();
-//             if (!imageSrc) return;
-
-//             const img = new Image();
-//             img.src = imageSrc;
-
-//             img.onload = () => {
-//                 const video = webcamRef.current?.video;
-//                 if (!video) return;
-
-//                 const frame = document.querySelector(`.${styles.cropFrame}`);
-//                 const videoRect = video.getBoundingClientRect();
-//                 const frameRect = frame.getBoundingClientRect();
-
-//                 // Относительные координаты рамки
-//                 const relX = (frameRect.left - videoRect.left) / videoRect.width;
-//                 const relY = (frameRect.top - videoRect.top) / videoRect.height;
-//                 const relW = frameRect.width / videoRect.width;
-//                 const relH = frameRect.height / videoRect.height;
-
-//                 // Переводим в реальные координаты изображения
-//                 const cropX = img.width * relX;
-//                 const cropY = img.height * relY;
-//                 const cropWidth = img.width * relW;
-//                 const cropHeight = img.height * relH;
-
-//                 // Обрезаем
-//                 const canvas = document.createElement("canvas");
-//                 const ctx = canvas.getContext("2d");
-//                 canvas.width = cropWidth;
-//                 canvas.height = cropHeight;
-
-//                 ctx.drawImage(
-//                     img,
-//                     cropX, cropY, cropWidth, cropHeight,
-//                     0, 0, cropWidth, cropHeight
-//                 );
-
-//                 const croppedImage = canvas.toDataURL("image/png");
-//                 stopCamera();
-//                 onCapture(croppedImage);
-//             };
-//         }, 2300);
-//     };
-
-//     const handleUserMedia = () => {
-//         setTimeout(() => setIsReady(true), 150);
-//     };
-
-//     useEffect(() => stopCamera, []);
-
-//     return (
-//         <div className={styles.cameraContainer}>
-//             {!isReady && <div className={styles.darkBackground}></div>}
-//             <Webcam
-//                 ref={webcamRef}
-//                 audio={false}
-//                 screenshotFormat="image/png"
-//                 videoConstraints={{ facingMode: "environment" }}
-//                 className={`${styles.webcamVideo} ${isReady ? styles.show : ""}`}
-//                 onUserMedia={handleUserMedia}
-//                 playsInline
-//             />
-//             <div className={styles.topControls}>
-//                 <button
-//                     className={styles.exitBtn}
-//                     onClick={() => {
-//                         stopCamera();
-//                         onExit();
-//                     }}
-//                     aria-label="Exit to home"
-//                 >
-//                     X
-//                 </button>
-//             </div>
-
-//             <div className={styles.overlay}>
-//                 <div className={styles.viewfinder}>
-//                     <div className={styles["bottom-left"]}></div>
-//                     <div className={styles["bottom-right"]}></div>
-
-//                     {/* 🔲 Новая рамка для обрезки */}
-//                     <div className={styles.cropFrame}></div>
-//                 </div>
-//             </div>
-//             <div className={styles.wrapBtn}>
-//                 <button
-//                     className={styles.scanBtn}
-//                     onClick={handleCapture}
-//                     style={{ opacity: isProcessing ? 0 : 1 }}
-//                 ></button>
-
-//                 <Lottie
-//                     key={isProcessing ? "processing" : "idle"}
-//                     animationData={processing_6}
-//                     loop={false}
-//                     style={{
-//                         width: "80px",
-//                         height: "80px",
-//                         position: "absolute",
-//                         top: "50%",
-//                         left: "50%",
-//                         transform: "translate(-50%, -50%)",
-//                         opacity: isProcessing ? 1 : 0,
-//                         pointerEvents: "none",
-//                         filter: "brightness(0) invert(1)",
-//                     }}
-//                 />
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default CameraViewPage;
-
-// --------------------------------------!!!!!!!!!!!!!!!!!!---------------------
-
 import { useRef, useEffect, useState } from "react";
 import Lottie from "lottie-react";
 import Webcam from "react-webcam";
@@ -269,167 +22,80 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         audio.play().catch(() => { });
     };
 
-    //   const handleCapture = () => {  //!!!!!!!!!!!!! работает
+    // const handleCapture = () => {
     //     setIsProcessing(true);
+
     //     setTimeout(() => playClickSound(), 1000);
 
-    //     // Задержка имитирует анимацию/процессинг
+    //     // ⏳ делаем задержку для анимации (2.3 секунды)
     //     setTimeout(() => {
-    //       // Берём снимок (dataURL) — можно заменить на захват из video для лучшего разрешения
-    //       const imageSrc = webcamRef.current?.getScreenshot();
-    //       if (!imageSrc) {
-    //         setIsProcessing(false);
-    //         return;
-    //       }
-
-    //       const img = new Image();
-    //       img.src = imageSrc;
-
-    //       img.onload = () => {
-    //         // Получаем video элемент — он должен быть уже доступен, т.к. мы вызываем capture
     //         const video = webcamRef.current?.video;
-    //         const frameEl = frameRef.current;
-    //         if (!video || !frameEl) {
-    //           // Без video/frame ничего не делаем
-    //           setIsProcessing(false);
-    //           return;
+    //         if (!video) {
+    //             console.error("Video element not found");
+    //             setIsProcessing(false);
+    //             return;
     //         }
 
-    //         // Получаем прямоугольники в координатах окна
-    //         const videoRect = video.getBoundingClientRect();
-    //         const frameRect = frameEl.getBoundingClientRect();
+    //         // ✅ Захватываем кадр напрямую из видео в полном разрешении
+    //         const canvasFull = document.createElement("canvas");
+    //         canvasFull.width = video.videoWidth;
+    //         canvasFull.height = video.videoHeight;
 
-    //         // Вычисляем относительные координаты рамки внутри видео area
-    //         // clamp — чтобы не выйти за границы
-    //         const relX = Math.max(0, Math.min(1, (frameRect.left - videoRect.left) / videoRect.width));
-    //         const relY = Math.max(0, Math.min(1, (frameRect.top - videoRect.top) / videoRect.height));
-    //         const relW = Math.max(0, Math.min(1, frameRect.width / videoRect.width));
-    //         const relH = Math.max(0, Math.min(1, frameRect.height / videoRect.height));
+    //         const ctxFull = canvasFull.getContext("2d");
+    //         ctxFull.drawImage(video, 0, 0, canvasFull.width, canvasFull.height);
 
-    //         // Переводим в координаты пикселей исходного изображения (img.width / img.height)
-    //         const cropX = Math.round(img.width * relX);
-    //         const cropY = Math.round(img.height * relY);
-    //         const cropWidth = Math.round(img.width * relW);
-    //         const cropHeight = Math.round(img.height * relH);
+    //         // Получаем полное изображение в base64
+    //         const imageSrc = canvasFull.toDataURL("image/png");
 
-    //         // Если cropWidth/Height 0 — отмена
-    //         if (cropWidth <= 0 || cropHeight <= 0) {
-    //           setIsProcessing(false);
-    //           return;
-    //         }
+    //         // Создаём Image, чтобы обрезать нужную часть
+    //         const img = new Image();
+    //         img.src = imageSrc;
 
-    //         // Создаём canvas, отключаем сглаживание (если нужно)
-    //         const canvas = document.createElement("canvas");
-    //         canvas.width = cropWidth;
-    //         canvas.height = cropHeight;
-    //         const ctx = canvas.getContext("2d");
-    //         if (ctx) {
-    //           ctx.imageSmoothingEnabled = false;
-    //           ctx.drawImage(
-    //             img,
-    //             cropX,
-    //             cropY,
-    //             cropWidth,
-    //             cropHeight,
-    //             0,
-    //             0,
-    //             cropWidth,
-    //             cropHeight
-    //           );
-    //         }
+    //         img.onload = () => {
+    //             const frame = document.querySelector(`.${styles.cropFrame}`);
+    //             if (!frame) {
+    //                 console.error("Crop frame not found");
+    //                 setIsProcessing(false);
+    //                 return;
+    //             }
 
-    //         const croppedImage = canvas.toDataURL("image/png");
-    //         stopCamera();
-    //         onCapture(croppedImage);
-    //         setIsProcessing(false);
-    //       };
+    //             const videoRect = video.getBoundingClientRect();
+    //             const frameRect = frame.getBoundingClientRect();
 
-    //       img.onerror = () => {
-    //         // Если по какой-то причине картинка не загрузилась
-    //         setIsProcessing(false);
-    //       };
+    //             // 📐 Рассчитываем относительные координаты рамки
+    //             const relX = (frameRect.left - videoRect.left) / videoRect.width;
+    //             const relY = (frameRect.top - videoRect.top) / videoRect.height;
+    //             const relW = frameRect.width / videoRect.width;
+    //             const relH = frameRect.height / videoRect.height;
+
+    //             // 🔢 Переводим в реальные пиксели изображения
+    //             const cropX = img.width * relX;
+    //             const cropY = img.height * relY;
+    //             const cropWidth = img.width * relW;
+    //             const cropHeight = img.height * relH;
+
+    //             // ✂️ Создаём временный canvas под область обрезки
+    //             const canvasCrop = document.createElement("canvas");
+    //             canvasCrop.width = cropWidth;
+    //             canvasCrop.height = cropHeight;
+    //             const ctxCrop = canvasCrop.getContext("2d");
+
+    //             ctxCrop.drawImage(
+    //                 img,
+    //                 cropX, cropY, cropWidth, cropHeight,
+    //                 0, 0, cropWidth, cropHeight
+    //             );
+
+    //             // 🎨 Получаем финальное обрезанное изображение
+    //             const croppedImage = canvasCrop.toDataURL("image/png");
+
+    //             // 🛑 Останавливаем камеру и передаём результат
+    //             stopCamera();
+    //             onCapture(croppedImage);
+    //             setIsProcessing(false);
+    //         };
     //     }, 2300);
-    //   };
-
-    // ------------------------------------
-
-    const handleCapture = () => {
-        setIsProcessing(true);
-
-        // 🎵 небольшой звуковой эффект через 1 секунду
-        setTimeout(() => playClickSound(), 1000);
-
-        // ⏳ делаем задержку для анимации (2.3 секунды)
-        setTimeout(() => {
-            const video = webcamRef.current?.video;
-            if (!video) {
-                console.error("Video element not found");
-                setIsProcessing(false);
-                return;
-            }
-
-            // ✅ Захватываем кадр напрямую из видео в полном разрешении
-            const canvasFull = document.createElement("canvas");
-            canvasFull.width = video.videoWidth;
-            canvasFull.height = video.videoHeight;
-
-            const ctxFull = canvasFull.getContext("2d");
-            ctxFull.drawImage(video, 0, 0, canvasFull.width, canvasFull.height);
-
-            // Получаем полное изображение в base64
-            const imageSrc = canvasFull.toDataURL("image/png");
-
-            // Создаём Image, чтобы обрезать нужную часть
-            const img = new Image();
-            img.src = imageSrc;
-
-            img.onload = () => {
-                const frame = document.querySelector(`.${styles.cropFrame}`);
-                if (!frame) {
-                    console.error("Crop frame not found");
-                    setIsProcessing(false);
-                    return;
-                }
-
-                const videoRect = video.getBoundingClientRect();
-                const frameRect = frame.getBoundingClientRect();
-
-                // 📐 Рассчитываем относительные координаты рамки
-                const relX = (frameRect.left - videoRect.left) / videoRect.width;
-                const relY = (frameRect.top - videoRect.top) / videoRect.height;
-                const relW = frameRect.width / videoRect.width;
-                const relH = frameRect.height / videoRect.height;
-
-                // 🔢 Переводим в реальные пиксели изображения
-                const cropX = img.width * relX;
-                const cropY = img.height * relY;
-                const cropWidth = img.width * relW;
-                const cropHeight = img.height * relH;
-
-                // ✂️ Создаём временный canvas под область обрезки
-                const canvasCrop = document.createElement("canvas");
-                canvasCrop.width = cropWidth;
-                canvasCrop.height = cropHeight;
-                const ctxCrop = canvasCrop.getContext("2d");
-
-                ctxCrop.drawImage(
-                    img,
-                    cropX, cropY, cropWidth, cropHeight,
-                    0, 0, cropWidth, cropHeight
-                );
-
-                // 🎨 Получаем финальное обрезанное изображение
-                const croppedImage = canvasCrop.toDataURL("image/png");
-
-                // 🛑 Останавливаем камеру и передаём результат
-                stopCamera();
-                onCapture(croppedImage);
-                setIsProcessing(false);
-            };
-        }, 2300);
-    };
-
-    // -----------------------------------------------------------
+    // };
 
     // const handleCapture = () => {
     //     setIsProcessing(true);
@@ -440,7 +106,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //         const video = webcamRef.current?.video;
     //         if (!video) return;
 
-    //         // 1️⃣ Захват кадра напрямую из видео
+    //         // 1️⃣ Захват кадра из видео
     //         const canvas = document.createElement("canvas");
     //         canvas.width = video.videoWidth;
     //         canvas.height = video.videoHeight;
@@ -449,85 +115,262 @@ const CameraViewPage = ({ onCapture, onExit }) => {
 
     //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-    //         // 2️⃣ Инициализация OpenCV.js
+    //         // 2️⃣ Загружаем в OpenCV
     //         const src = cv.matFromImageData(imgData);
     //         const gray = new cv.Mat();
-    //         const blurred = new cv.Mat();
-    //         const edged = new cv.Mat();
+    //         const thresh = new cv.Mat();
 
-    //         // 3️⃣ Преобразуем в серое и применяем размытие + детектор границ
+    //         // 3️⃣ Конвертируем в grayscale и бинаризуем
     //         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-    //         cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
-    //         cv.Canny(blurred, edged, 50, 150);
+    //         // cv.threshold(gray, thresh, 80, 255, cv.THRESH_BINARY_INV + cv.THRESH_OTSU);////////
+
+    //         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    //         cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+    //         cv.adaptiveThreshold(
+    //             gray,
+    //             thresh,
+    //             255,
+    //             cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+    //             cv.THRESH_BINARY_INV,
+    //             11,
+    //             2
+    //         );
 
     //         // 4️⃣ Находим контуры
     //         const contours = new cv.MatVector();
     //         const hierarchy = new cv.Mat();
-    //         cv.findContours(edged, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+    //         cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-    //         let maxArea = 0;
-    //         let bestRect = null;
+    //         const squares = [];
 
-    //         // 5️⃣ Ищем самый большой прямоугольный контур (тест-полоска)------------
+    //         // 5️⃣ Фильтруем небольшие квадратные контуры
     //         for (let i = 0; i < contours.size(); i++) {
     //             const cnt = contours.get(i);
     //             const approx = new cv.Mat();
     //             cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
 
-    //             if (approx.rows === 4) {
-    //                 const area = cv.contourArea(approx);
-    //                 if (area > maxArea) {
-    //                     maxArea = area;
-    //                     bestRect = approx;
+    //             // if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+
+    //             for (let i = 0; i < contours.size(); i++) {
+    //                 const cnt = contours.get(i);
+    //                 cv.drawContours(src, contours, i, new cv.Scalar(255, 0, 0, 255), 2);
+    //             }
+    //             cv.imshow("debugCanvas", src);
+    //             if (approx.rows === 4 && cv.contourArea(approx) > 200) {
+
+    //                 const rect = cv.boundingRect(approx);
+    //                 const aspect = rect.width / rect.height;
+    //                 if (aspect > 0.8 && aspect < 1.2) {
+    //                     squares.push(rect);
     //                 }
     //             }
-    //             approx.delete();
+
     //             cnt.delete();
+    //             approx.delete();
     //         }
 
-    //         // 6️⃣ Если нашли прямоугольник, обрезаем
-    //         if (bestRect) {
-    //             // Получаем координаты вершин
-    //             const points = [];
-    //             for (let i = 0; i < 4; i++) {
-    //                 points.push({
-    //                     x: bestRect.intPtr(i, 0)[0],
-    //                     y: bestRect.intPtr(i, 0)[1],
-    //                 });
-    //             }
+    //         // 6️⃣ Проверяем, нашли ли 4 маркера
+    //         if (squares.length === 4) {
+    //             // Сортируем по положению: top-left, top-right, bottom-right, bottom-left
+    //             squares.sort((a, b) => a.y - b.y || a.x - b.x);
 
-    //             // Находим bounding box
-    //             const x = Math.min(...points.map(p => p.x));
-    //             const y = Math.min(...points.map(p => p.y));
-    //             const w = Math.max(...points.map(p => p.x)) - x;
-    //             const h = Math.max(...points.map(p => p.y)) - y;
+    //             const topLeft = squares[0];
+    //             const topRight = squares[1];
+    //             const bottomLeft = squares[2];
+    //             const bottomRight = squares[3];
 
-    //             // Обрезаем на canvas
-    //             const croppedCanvas = document.createElement("canvas");
-    //             croppedCanvas.width = w;
-    //             croppedCanvas.height = h;
-    //             const croppedCtx = croppedCanvas.getContext("2d");
-    //             croppedCtx.drawImage(canvas, x, y, w, h, 0, 0, w, h);
+    //             // Центры этих квадратов
+    //             const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    //                 topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
+    //                 topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
+    //                 bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
+    //                 bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
+    //             ]);
 
-    //             const croppedImage = croppedCanvas.toDataURL("image/png");
+    //             // 7️⃣ Целевая "ровная" форма
+    //             const width = 600;
+    //             const height = 200;
+    //             const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+    //                 0, 0,
+    //                 width, 0,
+    //                 width, height,
+    //                 0, height
+    //             ]);
+
+    //             // 8️⃣ Вычисляем матрицу преобразования и выравниваем
+    //             const M = cv.getPerspectiveTransform(srcPts, dstPts);
+    //             const warped = new cv.Mat();
+    //             cv.warpPerspective(src, warped, M, new cv.Size(width, height));
+
+    //             // 9️⃣ Преобразуем результат в base64
+    //             const outputCanvas = document.createElement("canvas");
+    //             outputCanvas.width = width;
+    //             outputCanvas.height = height;
+    //             cv.imshow(outputCanvas, warped);
+
+    //             const croppedImage = outputCanvas.toDataURL("image/png");
     //             onCapture(croppedImage);
+
+    //             // Очистка
+    //             warped.delete();
+    //             M.delete();
+    //             srcPts.delete();
+    //             dstPts.delete();
     //         } else {
-    //             // Если прямоугольник не найден — можно вернуть весь кадр или показать ошибку
-    //             const fallbackImage = canvas.toDataURL("image/png");
-    //             onCapture(fallbackImage);
+    //             console.warn("Не удалось найти 4 маркера. Используется fallback.");
+    //             const fallback = canvas.toDataURL("image/png");
+    //             onCapture(fallback);
     //         }
 
-    //         // 7️⃣ Очистка памяти OpenCV
+    //         // Очистка памяти
     //         src.delete();
     //         gray.delete();
-    //         blurred.delete();
-    //         edged.delete();
+    //         thresh.delete();
     //         contours.delete();
     //         hierarchy.delete();
 
     //         stopCamera();
+    //         setIsProcessing(false);
     //     }, 2300);
     // };
+
+    const handleCapture = () => {
+        setIsProcessing(true);
+
+        // 🔊 звук через 1 секунду
+        setTimeout(() => playClickSound(), 1000);
+
+        // ⏳ задержка под анимацию (2.3 сек)
+        setTimeout(() => {
+            const video = webcamRef.current?.video;
+            if (!video) return;
+
+            // 1️⃣ Захват кадра из видео (в полном разрешении)
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            // 2️⃣ Загружаем изображение в OpenCV
+            const src = cv.matFromImageData(imgData);
+            const gray = new cv.Mat();
+            const thresh = new cv.Mat();
+
+            // 3️⃣ Преобразуем в ч/б и делаем бинаризацию
+            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+            cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+            cv.adaptiveThreshold(
+                gray,
+                thresh,
+                255,
+                cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+                cv.THRESH_BINARY_INV,
+                11,
+                2
+            );
+
+            // 4️⃣ Находим контуры
+            const contours = new cv.MatVector();
+            const hierarchy = new cv.Mat();
+            cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+            const squares = [];
+
+            // 5️⃣ Фильтруем контуры, похожие на маркеры (почти квадратные, с подходящей площадью)
+            for (let i = 0; i < contours.size(); i++) {
+                const cnt = contours.get(i);
+                const approx = new cv.Mat();
+                cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+                if (approx.rows === 4 && cv.contourArea(approx) > 200) {
+                    const rect = cv.boundingRect(approx);
+                    const aspect = rect.width / rect.height;
+                    if (aspect > 0.8 && aspect < 1.2) {
+                        squares.push(rect);
+                    }
+                }
+
+                cnt.delete();
+                approx.delete();
+            }
+
+            // 🧪 Отладка — визуализируем найденные контуры на копии изображения
+            const debugImg = src.clone();
+            cv.drawContours(debugImg, contours, -1, new cv.Scalar(255, 0, 0, 255), 2);
+            cv.imshow("debugCanvas", debugImg);
+            debugImg.delete();
+
+            // 6️⃣ Проверяем, нашли ли 4 маркера
+            if (squares.length === 4) {
+                console.log("✅ Найдены 4 маркера:", squares);
+
+                // сортируем по положению — чтобы выровнять правильно
+                squares.sort((a, b) => a.y - b.y || a.x - b.x);
+
+                const topLeft = squares[0];
+                const topRight = squares[1];
+                const bottomLeft = squares[2];
+                const bottomRight = squares[3];
+
+                // Центры квадратов
+                const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                    topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
+                    topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
+                    bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
+                    bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
+                ]);
+
+                // Целевая выровненная область
+                const width = 600;
+                const height = 200;
+                const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                    0, 0,
+                    width, 0,
+                    width, height,
+                    0, height
+                ]);
+
+                // 7️⃣ Преобразование перспективы
+                const M = cv.getPerspectiveTransform(srcPts, dstPts);
+                const warped = new cv.Mat();
+                cv.warpPerspective(src, warped, M, new cv.Size(width, height));
+
+                // 8️⃣ Получаем результат как base64
+                const outputCanvas = document.createElement("canvas");
+                outputCanvas.width = width;
+                outputCanvas.height = height;
+                cv.imshow(outputCanvas, warped);
+                const croppedImage = outputCanvas.toDataURL("image/png");
+
+                // 🛑 Останавливаем камеру и передаём результат
+                stopCamera();
+                onCapture(croppedImage);
+
+                // Очистка
+                warped.delete();
+                M.delete();
+                srcPts.delete();
+                dstPts.delete();
+            } else {
+                console.warn("⚠️ Не удалось найти 4 маркера. Используем fallback.");
+                const fallback = canvas.toDataURL("image/png");
+                onCapture(fallback);
+            }
+
+            // 🧹 Очистка памяти
+            src.delete();
+            gray.delete();
+            thresh.delete();
+            contours.delete();
+            hierarchy.delete();
+
+            stopCamera();
+            setIsProcessing(false);
+        }, 2300);
+    };
 
     const handleUserMedia = () => {
         // camera ready
@@ -535,7 +378,6 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     };
 
     useEffect(() => {
-        // при размонтировании останавливаем камеру
         return () => stopCamera();
     }, []);
 
@@ -555,6 +397,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 onUserMedia={handleUserMedia}
                 playsInline
             />
+            <canvas id="debugCanvas" width="400" height="300" style={{ position: "absolute", bottom: 10, left: 10, border: "1px solid red" }}></canvas>
             <div className={styles.topControls}>
                 <button
                     className={styles.exitBtn}
