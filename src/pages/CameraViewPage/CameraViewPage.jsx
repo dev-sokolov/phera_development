@@ -610,59 +610,167 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //     }, 2300);
     // };
 
-    // --------------------------------------------------------------
+    // --------------------------------------------------------------???
+
+    // const handleCapture = () => {
+    //     setIsProcessing(true);
+    //     setTimeout(() => playClickSound(), 1000);
+
+    //     setTimeout(() => {
+    //         const video = webcamRef.current?.video;
+    //         if (!video) return;
+
+    //         // 1️⃣ Снимаем кадр с максимальным разрешением
+    //         const canvas = document.createElement("canvas");
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         const ctx = canvas.getContext("2d");
+    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    //         // 2️⃣ Получаем размеры видео на экране (CSS)
+    //         const videoRect = video.getBoundingClientRect();
+    //         const frameRect = frameRef.current.getBoundingClientRect();
+
+    //         // 3️⃣ Вычисляем коэффициенты масштабирования
+    //         const scaleX = video.videoWidth / videoRect.width;
+    //         const scaleY = video.videoHeight / videoRect.height;
+
+    //         // 4️⃣ Вычисляем координаты рамки в координатах видео
+    //         const roiX = Math.round((frameRect.left - videoRect.left) * scaleX);
+    //         const roiY = Math.round((frameRect.top - videoRect.top) * scaleY);
+    //         const roiWidth = Math.round(frameRect.width * scaleX);
+    //         const roiHeight = Math.round(frameRect.height * scaleY);
+
+    //         console.log("ROI coords:", roiX, roiY, roiWidth, roiHeight, "Video size:", video.videoWidth, video.videoHeight);
+
+    //         // 5️⃣ Загружаем в OpenCV
+    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    //         const src = cv.matFromImageData(imgData);
+
+    //         // 6️⃣ Обрезаем по ROI
+    //         const cropped = src.roi(new cv.Rect(roiX, roiY, roiWidth, roiHeight));
+
+    //         // 7️⃣ Преобразуем в Base64
+    //         const outputCanvas = document.createElement("canvas");
+    //         outputCanvas.width = roiWidth;
+    //         outputCanvas.height = roiHeight;
+    //         cv.imshow(outputCanvas, cropped);
+    //         const croppedImage = outputCanvas.toDataURL("image/png");
+
+    //         stopCamera();
+    //         onCapture(croppedImage);
+
+    //         // 8️⃣ Очистка
+    //         cropped.delete();
+    //         src.delete();
+    //         setIsProcessing(false);
+    //     }, 2300);
+    // };
 
     const handleCapture = () => {
         setIsProcessing(true);
+
+        // 🔊 звук через 1 секунду
         setTimeout(() => playClickSound(), 1000);
 
+        // ⏳ задержка под анимацию
         setTimeout(() => {
             const video = webcamRef.current?.video;
             if (!video) return;
 
-            // 1️⃣ Снимаем кадр с максимальным разрешением
+            // 1️⃣ Захват кадра
             const canvas = document.createElement("canvas");
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext("2d");
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            // 2️⃣ Получаем размеры видео на экране (CSS)
-            const videoRect = video.getBoundingClientRect();
-            const frameRect = frameRef.current.getBoundingClientRect();
-
-            // 3️⃣ Вычисляем коэффициенты масштабирования
-            const scaleX = video.videoWidth / videoRect.width;
-            const scaleY = video.videoHeight / videoRect.height;
-
-            // 4️⃣ Вычисляем координаты рамки в координатах видео
-            const roiX = Math.round((frameRect.left - videoRect.left) * scaleX);
-            const roiY = Math.round((frameRect.top - videoRect.top) * scaleY);
-            const roiWidth = Math.round(frameRect.width * scaleX);
-            const roiHeight = Math.round(frameRect.height * scaleY);
-
-            console.log("ROI coords:", roiX, roiY, roiWidth, roiHeight, "Video size:", video.videoWidth, video.videoHeight);
-
-            // 5️⃣ Загружаем в OpenCV
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            // 2️⃣ Загружаем в OpenCV
             const src = cv.matFromImageData(imgData);
+            const gray = new cv.Mat();
+            cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+            cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+            const thresh = new cv.Mat();
+            cv.adaptiveThreshold(gray, thresh, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV, 11, 2);
 
-            // 6️⃣ Обрезаем по ROI
-            const cropped = src.roi(new cv.Rect(roiX, roiY, roiWidth, roiHeight));
+            // 3️⃣ Находим контуры и фильтруем квадраты
+            const contours = new cv.MatVector();
+            const hierarchy = new cv.Mat();
+            cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-            // 7️⃣ Преобразуем в Base64
-            const outputCanvas = document.createElement("canvas");
-            outputCanvas.width = roiWidth;
-            outputCanvas.height = roiHeight;
-            cv.imshow(outputCanvas, cropped);
-            const croppedImage = outputCanvas.toDataURL("image/png");
+            const squares = [];
+            for (let i = 0; i < contours.size(); i++) {
+                const cnt = contours.get(i);
+                const approx = new cv.Mat();
+                cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
 
-            stopCamera();
-            onCapture(croppedImage);
+                if (approx.rows === 4 && cv.contourArea(approx) > 200) {
+                    const rect = cv.boundingRect(approx);
+                    const aspect = rect.width / rect.height;
+                    if (aspect > 0.8 && aspect < 1.2) squares.push(rect);
+                }
 
-            // 8️⃣ Очистка
-            cropped.delete();
+                cnt.delete();
+                approx.delete();
+            }
+
+            if (squares.length === 4) {
+                // 4️⃣ Выравниваем по маркерам
+                squares.sort((a, b) => a.y - b.y || a.x - b.x);
+                const [topLeft, topRight, bottomLeft, bottomRight] = squares;
+
+                const srcPts = cv.matFromArray(4, 1, cv.CV_32FC2, [
+                    topLeft.x + topLeft.width / 2, topLeft.y + topLeft.height / 2,
+                    topRight.x + topRight.width / 2, topRight.y + topRight.height / 2,
+                    bottomRight.x + bottomRight.width / 2, bottomRight.y + bottomRight.height / 2,
+                    bottomLeft.x + bottomLeft.width / 2, bottomLeft.y + bottomLeft.height / 2
+                ]);
+
+                const width = 800;   // фиксированная ширина
+                const height = 1000; // фиксированная высота
+                const dstPts = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, width, 0, width, height, 0, height]);
+
+                const M = cv.getPerspectiveTransform(srcPts, dstPts);
+                const warped = new cv.Mat();
+                cv.warpPerspective(src, warped, M, new cv.Size(width, height));
+
+                // 5️⃣ Берём центральную полоску (по вертикали)
+                const cropY = Math.round(height * 0.25);
+                const cropHeight = Math.round(height * 0.5);
+                const cropX = 0;
+                const cropWidth = width;
+                const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
+
+                // 6️⃣ Конвертируем в Base64
+                const outputCanvas = document.createElement("canvas");
+                outputCanvas.width = cropWidth;
+                outputCanvas.height = cropHeight;
+                cv.imshow(outputCanvas, cropped);
+                const croppedImage = outputCanvas.toDataURL("image/png");
+
+                // 7️⃣ Очистка
+                cropped.delete();
+                warped.delete();
+                M.delete();
+                srcPts.delete();
+                dstPts.delete();
+
+                stopCamera();
+                onCapture(croppedImage);
+            } else {
+                // fallback: весь кадр
+                console.warn("⚠️ Не удалось найти 4 маркера. Используем fallback.");
+                onCapture(canvas.toDataURL("image/png"));
+            }
+
+            // 🧹 Очистка
             src.delete();
+            gray.delete();
+            thresh.delete();
+            contours.delete();
+            hierarchy.delete();
+
             setIsProcessing(false);
         }, 2300);
     };
