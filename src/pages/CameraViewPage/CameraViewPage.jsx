@@ -139,23 +139,10 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 const warped = new cv.Mat();
                 cv.warpPerspective(src, warped, M, new cv.Size(width, height));
 
-                // 🔄 Проверка ориентации — если документ вверх ногами, поворачиваем!!!!!!!!!!!!!!!
-                // const averageTopY = (topLeft.center.y + topRight.center.y) / 2;
-                // const averageBottomY = (bottomLeft.center.y + bottomRight.center.y) / 2;
-
-                // // Если верх оказался ниже низа (из-за переворота камеры или документа)
-                // if (averageTopY > averageBottomY) {
-                //     console.log("📸 Документ вверх ногами — выполняем разворот.");
-                //     cv.rotate(warped, warped, cv.ROTATE_180);
-                // }
-
                 // ✂️ Обрезаем
-                // const cropX = Math.round(width * 0.19);
                 const cropX = Math.round(width * 0.21);
-                // const cropY = Math.round(height * 0.1);
                 const cropY = Math.round(height * 0.09);
                 const cropWidth = Math.round(width * 0.6);
-                // const cropHeight = Math.round(height * 0.6);
                 const cropHeight = Math.round(height * 0.62);
 
                 const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
