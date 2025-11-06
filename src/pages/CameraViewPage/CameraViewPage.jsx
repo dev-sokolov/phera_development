@@ -150,10 +150,13 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 // }
 
                 // ✂️ Обрезаем
-                const cropX = Math.round(width * 0.19);
-                const cropY = Math.round(height * 0.1);
+                // const cropX = Math.round(width * 0.19);
+                const cropX = Math.round(width * 0.21);
+                // const cropY = Math.round(height * 0.1);
+                const cropY = Math.round(height * 0.09);
                 const cropWidth = Math.round(width * 0.6);
-                const cropHeight = Math.round(height * 0.6);
+                // const cropHeight = Math.round(height * 0.6);
+                const cropHeight = Math.round(height * 0.62);
 
                 const cropped = warped.roi(new cv.Rect(cropX, cropY, cropWidth, cropHeight));
                 const outputCanvas = document.createElement("canvas");
