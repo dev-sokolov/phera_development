@@ -263,16 +263,6 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //     }
     // }, [hasFourMarkers]);
 
-    // useEffect(() => {
-    //     if (hasFourMarkers && !didVibrate && navigator.vibrate) {
-    //         navigator.vibrate(120);
-    //         setDidVibrate(true);
-    //     } else if (!hasFourMarkers && didVibrate) {
-    //         // сбрасываем, чтобы снова можно было вибрировать
-    //         setDidVibrate(false);
-    //     }
-    // }, [hasFourMarkers, didVibrate]);
-
     // ----------------------------------------------------------
 
     return (
