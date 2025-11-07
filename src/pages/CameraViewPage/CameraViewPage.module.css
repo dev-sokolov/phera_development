@@ -83,6 +83,7 @@
   background: transparent;
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.2);
   z-index: 3;
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .viewfinder::before,
@@ -93,7 +94,7 @@
   position: absolute;
   width: 40px;
   height: 40px;
-  border: 3px solid #fff;
+  border: 3px solid #ffffffb2;
   box-sizing: border-box;
 }
 
@@ -139,7 +140,7 @@
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  background-color: #ffffff;
+  background-color: #ffffffb2;
 }
 
 .topControls {
@@ -176,19 +177,15 @@
 
 .errorMessage {
   position: absolute;
-  /* bottom: 190px; */
   top: 45px;
   left: 50%;
   transform: translateX(-50%);
-  /* background: rgba(255, 0, 0, 0.85);
-  color: white; */
+  color: white;
   background-color: white;
   color: rgba(255, 0, 0, 0.85);
   padding: 7px 10px;
   border-radius: 12px;
   font-weight: 600;
-  /* font-size: 1.1rem; */
-  /* font-size: 18px; */
   animation: fadeInOut 2s ease;
   z-index: 1000;
 }
@@ -211,7 +208,22 @@
   }
 }
 
-/* .isNotFocused {
-  position: absolute;
-  z-index: 1000;
-} */
+.viewfinder.detected::before,
+.viewfinder.detected::after,
+.viewfinder.detected .bottom-left,
+.viewfinder.detected .bottom-right {
+  /* border-color: #ffd700;  */
+  border-color: #ffd9006e;
+}
+
+.scanBtn.detected {
+  background-color: #ffd9006e;
+  ;
+}
+
+.viewfinder.detected {
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+  /* transition: box-shadow 0.3s ease-in-out; */
+  transform: translate(-50%, -50%) scale(0.95);
+  /* немного сжимаем рамку */
+}

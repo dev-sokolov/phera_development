@@ -10,6 +10,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     const [isReady, setIsReady] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [hasFourMarkers, setHasFourMarkers] = useState(false);
 
     const stopCamera = () => {
         const video = webcamRef.current?.video;
@@ -188,6 +189,72 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         return () => stopCamera();
     }, []);
 
+    useEffect(() => {
+        if (!isReady) return;
+
+        const interval = setInterval(() => {
+            const video = webcamRef.current?.video;
+            if (!video) return;
+
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            const src = cv.matFromImageData(imgData);
+            const gray = new cv.Mat();
+            const thresh = new cv.Mat();
+            const contours = new cv.MatVector();
+            const hierarchy = new cv.Mat();
+
+            try {
+                cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+                cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+                cv.adaptiveThreshold(
+                    gray,
+                    thresh,
+                    255,
+                    cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+                    cv.THRESH_BINARY_INV,
+                    15,
+                    4
+                );
+                cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+                const squares = [];
+                for (let i = 0; i < contours.size(); i++) {
+                    const cnt = contours.get(i);
+                    const approx = new cv.Mat();
+                    cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+                    if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+                        const rect = cv.boundingRect(approx);
+                        const aspect = rect.width / rect.height;
+                        if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+                    }
+
+                    cnt.delete();
+                    approx.delete();
+                }
+
+                // обновляем состояние
+                setHasFourMarkers(squares.length >= 4);
+            } catch (e) {
+                console.warn(e);
+            } finally {
+                src.delete();
+                gray.delete();
+                thresh.delete();
+                contours.delete();
+                hierarchy.delete();
+            }
+        }, 500);
+
+        return () => clearInterval(interval);
+    }, [isReady]);
+
     return (
         <div className={styles.cameraContainer}>
             {!isReady && <div className={styles.darkBackground}></div>}
@@ -218,7 +285,8 @@ const CameraViewPage = ({ onCapture, onExit }) => {
             </div>
 
             <div className={styles.overlay}>
-                <div className={styles.viewfinder}>
+                {/* <div className={styles.viewfinder}> */}
+                <div className={`${styles.viewfinder} ${hasFourMarkers ? styles.detected : ""}`}>
                     <div className={styles["bottom-left"]}></div>
                     <div className={styles["bottom-right"]}></div>
                 </div>
@@ -232,7 +300,8 @@ const CameraViewPage = ({ onCapture, onExit }) => {
 
             <div className={styles.wrapBtn}>
                 <button
-                    className={styles.scanBtn}
+                    // className={styles.scanBtn}
+                    className={`${styles.scanBtn} ${hasFourMarkers ? styles.detected : ""}`}
                     onClick={handleCapture}
                     style={{ opacity: isProcessing ? 0 : 1 }}
                 ></button>
