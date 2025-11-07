@@ -7,9 +7,9 @@ import processing_6 from "../../assets/lottie/processing_6.json";
 
 const CameraViewPage = ({ onCapture, onExit }) => {
     const webcamRef = useRef(null);
-    // const frameRef = useRef(null); 
     const [isReady, setIsReady] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const stopCamera = () => {
         const video = webcamRef.current?.video;
@@ -162,6 +162,8 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 dstPts.delete();
             } else {
                 console.warn("⚠️ Не удалось найти 4 маркера.");
+                setErrorMessage("Scan failed. Try again."); // 👈 Добавляем сообщение
+                setTimeout(() => setErrorMessage(""), 2000);
                 setIsProcessing(false);
                 return;
             }
@@ -202,7 +204,6 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 onUserMedia={handleUserMedia}
                 playsInline
             />
-            {/* <canvas id="debugCanvas" width="400" height="300" style={{ position: "absolute", bottom: 10, left: 10, border: "1px solid red" }}></canvas> */}
             <div className={styles.topControls}>
                 <button
                     className={styles.exitBtn}
@@ -220,11 +221,14 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 <div className={styles.viewfinder}>
                     <div className={styles["bottom-left"]}></div>
                     <div className={styles["bottom-right"]}></div>
-
-                    {/* Привязываем ref к cropFrame */}
-                    {/* <div ref={frameRef} className={styles.cropFrame}></div> */}
                 </div>
             </div>
+
+            {errorMessage && (
+                <div className={styles.errorMessage}>
+                    {errorMessage}
+                </div>
+            )}
 
             <div className={styles.wrapBtn}>
                 <button

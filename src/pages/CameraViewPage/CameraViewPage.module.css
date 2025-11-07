@@ -174,4 +174,44 @@
 
 /* ---------------------------------- */
 
+.errorMessage {
+  position: absolute;
+  /* bottom: 190px; */
+  top: 45px;
+  left: 50%;
+  transform: translateX(-50%);
+  /* background: rgba(255, 0, 0, 0.85);
+  color: white; */
+  background-color: white;
+  color: rgba(255, 0, 0, 0.85);
+  padding: 7px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+  /* font-size: 1.1rem; */
+  /* font-size: 18px; */
+  animation: fadeInOut 2s ease;
+  z-index: 1000;
+}
 
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+
+  10%,
+  90% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+}
+
+/* .isNotFocused {
+  position: absolute;
+  z-index: 1000;
+} */
