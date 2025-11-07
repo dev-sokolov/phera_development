@@ -213,11 +213,13 @@
 .viewfinder.detected .bottom-left,
 .viewfinder.detected .bottom-right {
   /* border-color: #ffd700;  */
-  border-color: #ffd9006e;
+  /* border-color: #ffd9006e; */
+  border-color: #ffd9009c;
 }
 
 .scanBtn.detected {
-  background-color: #ffd9006e;
+  /* background-color: #ffd9006e; */
+  background-color: #ffd9009c;
   ;
 }
 

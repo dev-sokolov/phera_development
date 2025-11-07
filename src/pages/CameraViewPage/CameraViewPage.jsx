@@ -11,7 +11,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [hasFourMarkers, setHasFourMarkers] = useState(false);
-    const [didVibrate, setDidVibrate] = useState(false);
+    // const [didVibrate, setDidVibrate] = useState(false);
 
     const stopCamera = () => {
         const video = webcamRef.current?.video;
@@ -263,15 +263,15 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //     }
     // }, [hasFourMarkers]);
 
-    useEffect(() => {
-        if (hasFourMarkers && !didVibrate && navigator.vibrate) {
-            navigator.vibrate(120);
-            setDidVibrate(true);
-        } else if (!hasFourMarkers && didVibrate) {
-            // сбрасываем, чтобы снова можно было вибрировать
-            setDidVibrate(false);
-        }
-    }, [hasFourMarkers, didVibrate]);
+    // useEffect(() => {
+    //     if (hasFourMarkers && !didVibrate && navigator.vibrate) {
+    //         navigator.vibrate(120);
+    //         setDidVibrate(true);
+    //     } else if (!hasFourMarkers && didVibrate) {
+    //         // сбрасываем, чтобы снова можно было вибрировать
+    //         setDidVibrate(false);
+    //     }
+    // }, [hasFourMarkers, didVibrate]);
 
     // ----------------------------------------------------------
 
