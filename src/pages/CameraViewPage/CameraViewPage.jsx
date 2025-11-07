@@ -189,8 +189,169 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         return () => stopCamera();
     }, []);
 
+    useEffect(() => {
+        if (!isReady) return;
+
+        const interval = setInterval(() => {
+            const video = webcamRef.current?.video;
+            if (!video) return;
+
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            const src = cv.matFromImageData(imgData);
+            const gray = new cv.Mat();
+            const thresh = new cv.Mat();
+            const contours = new cv.MatVector();
+            const hierarchy = new cv.Mat();
+
+            try {
+                cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+                cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+                cv.adaptiveThreshold(
+                    gray,
+                    thresh,
+                    255,
+                    cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+                    cv.THRESH_BINARY_INV,
+                    15,
+                    4
+                );
+                cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+                const squares = [];
+                for (let i = 0; i < contours.size(); i++) {
+                    const cnt = contours.get(i);
+                    const approx = new cv.Mat();
+                    cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+                    if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+                        const rect = cv.boundingRect(approx);
+                        const aspect = rect.width / rect.height;
+                        if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+                    }
+
+                    cnt.delete();
+                    approx.delete();
+                }
+
+                // обновляем состояние
+                setHasFourMarkers(squares.length >= 4);
+            } catch (e) {
+                console.warn(e);
+            } finally {
+                src.delete();
+                gray.delete();
+                thresh.delete();
+                contours.delete();
+                hierarchy.delete();
+            }
+        }, 500);
+
+        return () => clearInterval(interval);
+    }, [isReady]);
+
+    useEffect(() => {
+        if (hasFourMarkers && navigator.vibrate) {
+            // короткая вибрация при обнаружении
+            navigator.vibrate(120);
+        }
+    }, [hasFourMarkers]);
+
+    // ----------------------------------------------------------
+
     // useEffect(() => {
     //     if (!isReady) return;
+
+    //     const interval = setInterval(() => {
+    //         const video = webcamRef.current?.video;
+    //         if (!video) return;
+
+    //         const canvas = document.createElement("canvas");
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         const ctx = canvas.getContext("2d");
+    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    //         const src = cv.matFromImageData(imgData);
+    //         const gray = new cv.Mat();
+    //         const thresh = new cv.Mat();
+    //         const contours = new cv.MatVector();
+    //         const hierarchy = new cv.Mat();
+
+    //         const isLikelyQRCode = (ctx, rect) => {
+    //             const data = ctx.getImageData(rect.x, rect.y, rect.width, rect.height).data;
+    //             let dark = 0, light = 0;
+    //             for (let i = 0; i < data.length; i += 4) {
+    //                 const brightness = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+    //                 if (brightness < 128) dark++;
+    //                 else light++;
+    //             }
+    //             const ratio = dark / (dark + light);
+    //             return ratio > 0.3 && ratio < 0.7;
+    //         };
+
+    //         try {
+    //             cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    //             cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+    //             cv.adaptiveThreshold(
+    //                 gray,
+    //                 thresh,
+    //                 255,
+    //                 cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+    //                 cv.THRESH_BINARY_INV,
+    //                 15,
+    //                 4
+    //             );
+    //             cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+    //             const squares = [];
+    //             for (let i = 0; i < contours.size(); i++) {
+    //                 const cnt = contours.get(i);
+    //                 const approx = new cv.Mat();
+    //                 cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+    //                 if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+    //                     const rect = cv.boundingRect(approx);
+    //                     const aspect = rect.width / rect.height;
+    //                     if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+    //                 }
+
+    //                 cnt.delete();
+    //                 approx.delete();
+    //             }
+
+    //             // проверяем каждый квадрат на QR
+    //             const validSquares = squares.filter(rect => isLikelyQRCode(ctx, rect));
+    //             setHasFourMarkers(validSquares.length === 4);
+
+    //         } catch (e) {
+    //             console.warn(e);
+    //             setHasFourMarkers(false);
+    //         } finally {
+    //             src.delete();
+    //             gray.delete();
+    //             thresh.delete();
+    //             contours.delete();
+    //             hierarchy.delete();
+    //         }
+    //     }, 500);
+
+    //     return () => clearInterval(interval);
+    // }, [isReady]);
+
+    // ----------------------------------------------------
+
+    // useEffect(() => {
+    //     if (!isReady) return;
+
+    //     const stabilityThreshold = 3; // число кадров подряд для подтверждения
+    //     let validCount = 0;
 
     //     const interval = setInterval(() => {
     //         const video = webcamRef.current?.video;
@@ -223,7 +384,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //             );
     //             cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-    //             const squares = [];
+    //             const validSquares = [];
     //             for (let i = 0; i < contours.size(); i++) {
     //                 const cnt = contours.get(i);
     //                 const approx = new cv.Mat();
@@ -232,15 +393,23 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //                 if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
     //                     const rect = cv.boundingRect(approx);
     //                     const aspect = rect.width / rect.height;
-    //                     if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+    //                     if (aspect > 0.6 && aspect < 1.4) validSquares.push(rect);
     //                 }
 
     //                 cnt.delete();
     //                 approx.delete();
     //             }
 
-    //             // обновляем состояние
-    //             setHasFourMarkers(squares.length >= 4);
+    //             // --- логика устойчивости ---
+    //             const isCurrentValid = validSquares.length === 4;
+
+    //             if (isCurrentValid) {
+    //                 validCount = Math.min(validCount + 1, stabilityThreshold);
+    //             } else {
+    //                 validCount = Math.max(validCount - 1, 0);
+    //             }
+
+    //             setHasFourMarkers(validCount >= stabilityThreshold);
     //         } catch (e) {
     //             console.warn(e);
     //         } finally {
@@ -254,87 +423,6 @@ const CameraViewPage = ({ onCapture, onExit }) => {
 
     //     return () => clearInterval(interval);
     // }, [isReady]);
-
-    useEffect(() => {
-        if (!isReady) return;
-
-        const interval = setInterval(() => {
-            const video = webcamRef.current?.video;
-            if (!video) return;
-
-            const canvas = document.createElement("canvas");
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const src = cv.matFromImageData(imgData);
-            const gray = new cv.Mat();
-            const thresh = new cv.Mat();
-            const contours = new cv.MatVector();
-            const hierarchy = new cv.Mat();
-
-            const isLikelyQRCode = (ctx, rect) => {
-                const data = ctx.getImageData(rect.x, rect.y, rect.width, rect.height).data;
-                let dark = 0, light = 0;
-                for (let i = 0; i < data.length; i += 4) {
-                    const brightness = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-                    if (brightness < 128) dark++;
-                    else light++;
-                }
-                const ratio = dark / (dark + light);
-                return ratio > 0.3 && ratio < 0.7;
-            };
-
-            try {
-                cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-                cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
-                cv.adaptiveThreshold(
-                    gray,
-                    thresh,
-                    255,
-                    cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-                    cv.THRESH_BINARY_INV,
-                    15,
-                    4
-                );
-                cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-
-                const squares = [];
-                for (let i = 0; i < contours.size(); i++) {
-                    const cnt = contours.get(i);
-                    const approx = new cv.Mat();
-                    cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
-
-                    if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
-                        const rect = cv.boundingRect(approx);
-                        const aspect = rect.width / rect.height;
-                        if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
-                    }
-
-                    cnt.delete();
-                    approx.delete();
-                }
-
-                // проверяем каждый квадрат на QR
-                const validSquares = squares.filter(rect => isLikelyQRCode(ctx, rect));
-                setHasFourMarkers(validSquares.length === 4);
-
-            } catch (e) {
-                console.warn(e);
-                setHasFourMarkers(false);
-            } finally {
-                src.delete();
-                gray.delete();
-                thresh.delete();
-                contours.delete();
-                hierarchy.delete();
-            }
-        }, 500);
-
-        return () => clearInterval(interval);
-    }, [isReady]);
 
     return (
         <div className={styles.cameraContainer}>

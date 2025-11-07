@@ -223,7 +223,14 @@
 
 .viewfinder.detected {
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
-  /* transition: box-shadow 0.3s ease-in-out; */
+/* transition: box-shadow 0.3s ease-in-out; */
   transform: translate(-50%, -50%) scale(0.95);
-  /* немного сжимаем рамку */
 }
+
+
+
+/* .viewfinder.detected {
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  transform: scale(0.95);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+} */
