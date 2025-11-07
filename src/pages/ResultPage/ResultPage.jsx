@@ -565,36 +565,193 @@
 
 // ----------------------------------------------------
 
+// import { useLocation, useNavigate } from "react-router-dom";
+// import { useState, useEffect } from "react";
+// import PersonalData from "../../components/PersonalData/PersonalData";
+// import exportSvg from "../../assets/icons/exportSvg.svg";
+// import talk from "../../assets/icons/talk.svg";
+// import checkedYes from "../../assets/icons/checkedYes.svg";
+// import checkedNo from "../../assets/icons/checkedNo.svg";
+// import styles from "./ResultPage.module.css";
+// import JSZip from "jszip";
+
+// const ResultPage = () => {
+//   const location = useLocation();
+//   const navigate = useNavigate();
+//   const { capturedImage } = location.state || {};
+
+//   const [phValue, setPhValue] = useState(null);
+//   const [isDataSharingActive, setIsDataSharingActive] = useState(false);
+//   const [age, setAge] = useState("");
+//   const [hormone, setHormone] = useState([]);
+//   const [ancestral, setAncestral] = useState("");
+
+//   useEffect(() => {
+//     if (!capturedImage) {
+//       navigate("/", { replace: true });
+//     }
+//   }, [capturedImage, navigate]);
+
+//   // --- RGB → LAB ---
+//   const rgbToLab = (r, g, b) => {
+//     r = r / 255; g = g / 255; b = b / 255;
+//     r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+//     g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+//     b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+
+//     const x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+//     const y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+//     const z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+
+//     const f = t => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
+//     const fx = f(x), fy = f(y), fz = f(z);
+
+//     return {
+//       L: 116 * fy - 16,
+//       a: 500 * (fx - fy),
+//       b: 200 * (fy - fz)
+//     };
+//   };
+
+//   const deltaE = (lab1, lab2) =>
+//     Math.sqrt((lab1.L - lab2.L) ** 2 + (lab1.a - lab2.a) ** 2 + (lab1.b - lab2.b) ** 2);
+
+//   // 🎨 Эталонная шкала pH (примерная — подкорректируй по своим цветам)
+//   const phScaleLab = [
+//     { ph: 4.0, color: rgbToLab(255, 230, 60) },   // ярко-жёлтый
+//     { ph: 5.0, color: rgbToLab(230, 220, 70) },   // желтовато-зелёный
+//     { ph: 6.0, color: rgbToLab(180, 210, 90) },   // светло-зелёный
+//     { ph: 7.0, color: rgbToLab(120, 200, 100) },  // нейтральный зелёный
+//     { ph: 8.0, color: rgbToLab(70, 180, 120) },   // зелёно-голубоватый
+//     { ph: 9.0, color: rgbToLab(50, 150, 130) }    // темно-зеленый/бирюзовый
+//   ];
+
+//   useEffect(() => {
+//     if (!capturedImage) return;
+
+//     const img = new Image();
+//     img.src = capturedImage;
+//     img.onload = () => {
+//       const canvas = document.createElement("canvas");
+//       canvas.width = img.width;
+//       canvas.height = img.height;
+//       const ctx = canvas.getContext("2d");
+//       ctx.drawImage(img, 0, 0, img.width, img.height);
+
+//       // 1️⃣ Область стика (центральная белая полоска)
+//       const stickWidth = 20;
+//       const stickHeight = img.height * 0.6;
+//       const stickX = img.width / 2 - stickWidth / 2;
+//       const stickY = img.height / 2 - stickHeight / 2;
+
+//       // 2️⃣ Центральный квадрат (на тестовой зоне)
+//       const squareSize = 10;
+//       const squareX = stickX + stickWidth / 2 - squareSize / 2;
+//       const squareY = stickY + stickHeight / 2 - squareSize / 2;
+
+//       const getAverageColor = (x, y, width, height) => {
+//         const imageData = ctx.getImageData(x, y, width, height);
+//         const data = imageData.data;
+//         let r = 0, g = 0, b = 0;
+//         const pixelCount = data.length / 4;
+//         for (let i = 0; i < data.length; i += 4) {
+//           r += data[i];
+//           g += data[i + 1];
+//           b += data[i + 2];
+//         }
+//         return {
+//           r: Math.round(r / pixelCount),
+//           g: Math.round(g / pixelCount),
+//           b: Math.round(b / pixelCount),
+//         };
+//       };
+
+//       const centerColor = getAverageColor(squareX, squareY, squareSize, squareSize);
+//       const centerLab = rgbToLab(centerColor.r, centerColor.g, centerColor.b);
+
+//       // 3️⃣ Сравнение со шкалой
+//       let closestPh = phScaleLab[0].ph;
+//       let minDelta = Infinity;
+
+//       for (const { ph, color } of phScaleLab) {
+//         const dE = deltaE(centerLab, color);
+//         if (dE < minDelta) {
+//           minDelta = dE;
+//           closestPh = ph;
+//         }
+//       }
+
+//       setPhValue(closestPh);
+//     };
+//   }, [capturedImage]);
+
+//   const handleExportZip = async () => {
+//     const data = { phValue, date: new Date().toLocaleString(), confidence: "98%" };
+//     const zip = new JSZip();
+//     zip.file("ph_results.json", JSON.stringify(data, null, 2));
+//     const content = await zip.generateAsync({ type: "blob" });
+//     const link = document.createElement("a");
+//     link.href = URL.createObjectURL(content);
+//     link.download = "ph_results.zip";
+//     link.click();
+//     URL.revokeObjectURL(link.href);
+//   };
+
+//   const handleTalkToDoctor = () => window.open("https://phera.digital/doctor", "_blank");
+
+//   return (
+//     <div className={styles.wrapResultPage}>
+//       <div className={styles.content}>
+//         {capturedImage && (
+//           <div className={styles.capturedImageWrap}>
+//             <img src={capturedImage} alt="Captured pH strip" className={styles.capturedImage} />
+//           </div>
+//         )}
+
+//         <div className={styles.ph}>
+//           <p className={styles.phTitle}>Your pH</p>
+//           <p className={styles.phValue}>{phValue !== null ? phValue.toFixed(1) : "…"}</p>
+//         </div>
+
+//         <div className={styles.processingResults}>
+//           <button className={styles.btn} onClick={handleExportZip}>
+//             <img src={exportSvg} alt="export" /> Export Results
+//           </button>
+//           <button className={styles.btn} onClick={() => setIsDataSharingActive(prev => !prev)}>
+//             <img src={isDataSharingActive ? checkedYes : checkedNo} alt="check" /> Share Data
+//           </button>
+//           <button className={styles.btn} onClick={handleTalkToDoctor}>
+//             <img src={talk} alt="talk to a Doctor" /> Talk to a Doctor
+//           </button>
+//         </div>
+
+//         <div className={styles.personalData}>
+//           <PersonalData
+//             isActive={isDataSharingActive}
+//             age={age}
+//             setAge={setAge}
+//             hormone={hormone}
+//             setHormone={setHormone}
+//             ancestral={ancestral}
+//             setAncestral={setAncestral}
+//           />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ResultPage;
+
+// ----------------------------------------------------
+
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import PersonalData from "../../components/PersonalData/PersonalData";
-import exportSvg from "../../assets/icons/exportSvg.svg";
-import talk from "../../assets/icons/talk.svg";
-import checkedYes from "../../assets/icons/checkedYes.svg";
-import checkedNo from "../../assets/icons/checkedNo.svg";
+import { useEffect, useState } from "react";
 import styles from "./ResultPage.module.css";
-import JSZip from "jszip";
 
-const ResultPage = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { capturedImage } = location.state || {};
-
-  const [phValue, setPhValue] = useState(null);
-  const [isDataSharingActive, setIsDataSharingActive] = useState(false);
-  const [age, setAge] = useState("");
-  const [hormone, setHormone] = useState([]);
-  const [ancestral, setAncestral] = useState("");
-
-  useEffect(() => {
-    if (!capturedImage) {
-      navigate("/", { replace: true });
-    }
-  }, [capturedImage, navigate]);
-
-  // --- RGB → LAB ---
-  const rgbToLab = (r, g, b) => {
-    r = r / 255; g = g / 255; b = b / 255;
+// --- 1️⃣ Преобразование RGB → LAB (такое же, как на CalibrationPage)
+const rgbToLab = (r, g, b) => {
+    r /= 255; g /= 255; b /= 255;
     r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
     g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
     b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
@@ -607,138 +764,126 @@ const ResultPage = () => {
     const fx = f(x), fy = f(y), fz = f(z);
 
     return {
-      L: 116 * fy - 16,
-      a: 500 * (fx - fy),
-      b: 200 * (fy - fz)
+        L: 116 * fy - 16,
+        a: 500 * (fx - fy),
+        b: 200 * (fy - fz)
     };
-  };
+};
 
-  const deltaE = (lab1, lab2) =>
-    Math.sqrt((lab1.L - lab2.L) ** 2 + (lab1.a - lab2.a) ** 2 + (lab1.b - lab2.b) ** 2);
+// --- 2️⃣ Расчёт расстояния ΔE между двумя цветами LAB
+const deltaE = (lab1, lab2) => {
+    const dL = lab1.L - lab2.L;
+    const da = lab1.a - lab2.a;
+    const db = lab1.b - lab2.b;
+    return Math.sqrt(dL * dL + da * da + db * db);
+};
 
-  // 🎨 Эталонная шкала pH (примерная — подкорректируй по своим цветам)
-  const phScaleLab = [
-    { ph: 4.0, color: rgbToLab(255, 230, 60) },   // ярко-жёлтый
-    { ph: 5.0, color: rgbToLab(230, 220, 70) },   // желтовато-зелёный
-    { ph: 6.0, color: rgbToLab(180, 210, 90) },   // светло-зелёный
-    { ph: 7.0, color: rgbToLab(120, 200, 100) },  // нейтральный зелёный
-    { ph: 8.0, color: rgbToLab(70, 180, 120) },   // зелёно-голубоватый
-    { ph: 9.0, color: rgbToLab(50, 150, 130) }    // темно-зеленый/бирюзовый
-  ];
+const ResultPage = ({  onBack }) => {
+    const location = useLocation();
+    const [phScale, setPhScale] = useState([]);
+    const [closestPh, setClosestPh] = useState(null);
 
-  useEffect(() => {
-    if (!capturedImage) return;
+    const { capturedImage } = location.state || {};
 
-    const img = new Image();
-    img.src = capturedImage;
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, img.width, img.height);
+    // --- 3️⃣ Загружаем пользовательскую калибровку или стандартную шкалу
+    useEffect(() => {
+        const calibrationData = localStorage.getItem("phCalibration");
 
-      // 1️⃣ Область стика (центральная белая полоска)
-      const stickWidth = 20;
-      const stickHeight = img.height * 0.6;
-      const stickX = img.width / 2 - stickWidth / 2;
-      const stickY = img.height / 2 - stickHeight / 2;
-
-      // 2️⃣ Центральный квадрат (на тестовой зоне)
-      const squareSize = 10;
-      const squareX = stickX + stickWidth / 2 - squareSize / 2;
-      const squareY = stickY + stickHeight / 2 - squareSize / 2;
-
-      const getAverageColor = (x, y, width, height) => {
-        const imageData = ctx.getImageData(x, y, width, height);
-        const data = imageData.data;
-        let r = 0, g = 0, b = 0;
-        const pixelCount = data.length / 4;
-        for (let i = 0; i < data.length; i += 4) {
-          r += data[i];
-          g += data[i + 1];
-          b += data[i + 2];
+        if (calibrationData) {
+            const parsed = JSON.parse(calibrationData);
+            const calibratedScale = Object.entries(parsed).map(([ph, lab]) => ({
+                ph: parseInt(ph),
+                ...lab
+            }));
+            setPhScale(calibratedScale);
+            console.log("✅ Используется пользовательская калибровка:", calibratedScale);
+        } else {
+            // стандартная (по умолчанию)
+            const defaultScale = [
+                { ph: 4, L: 65, a: 18, b: 60 },
+                { ph: 5, L: 70, a: 10, b: 50 },
+                { ph: 6, L: 75, a: 5, b: 35 },
+                { ph: 7, L: 80, a: -5, b: 25 },
+                { ph: 8, L: 83, a: -10, b: 15 },
+                { ph: 9, L: 87, a: -15, b: 10 },
+            ];
+            setPhScale(defaultScale);
+            console.log("ℹ️ Используется стандартная шкала");
         }
-        return {
-          r: Math.round(r / pixelCount),
-          g: Math.round(g / pixelCount),
-          b: Math.round(b / pixelCount),
+    }, []);
+
+    // --- 4️⃣ После загрузки шкалы сравниваем цвет стикера
+    useEffect(() => {
+        if (!phScale.length || !capturedImage) return;
+
+        const img = new Image();
+        img.src = capturedImage;
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+
+            // центр изображения — это наша тестовая зона
+            const centerX = img.width / 2;
+            const centerY = img.height / 2;
+            const size = Math.min(img.width, img.height) * 0.2;
+            const imageData = ctx.getImageData(centerX - size / 2, centerY - size / 2, size, size);
+
+            let r = 0, g = 0, b = 0;
+            const data = imageData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                r += data[i];
+                g += data[i + 1];
+                b += data[i + 2];
+            }
+            r /= data.length / 4;
+            g /= data.length / 4;
+            b /= data.length / 4;
+
+            const testLab = rgbToLab(r, g, b);
+
+            // --- 5️⃣ Ищем ближайший pH по LAB-расстоянию
+            let minDelta = Infinity;
+            let matchedPh = null;
+
+            for (const point of phScale) {
+                const dE = deltaE(testLab, point);
+                if (dE < minDelta) {
+                    minDelta = dE;
+                    matchedPh = point.ph;
+                }
+            }
+
+            setClosestPh(matchedPh);
         };
-      };
+    }, [phScale, capturedImage]);
 
-      const centerColor = getAverageColor(squareX, squareY, squareSize, squareSize);
-      const centerLab = rgbToLab(centerColor.r, centerColor.g, centerColor.b);
+    console.log("capturedImage:", capturedImage);
 
-      // 3️⃣ Сравнение со шкалой
-      let closestPh = phScaleLab[0].ph;
-      let minDelta = Infinity;
+    return (
+        <div className={styles.container}>
+            <h1>pH Result</h1>
 
-      for (const { ph, color } of phScaleLab) {
-        const dE = deltaE(centerLab, color);
-        if (dE < minDelta) {
-          minDelta = dE;
-          closestPh = ph;
-        }
-      }
+            {capturedImage && (
+                <img src={capturedImage} alt="Captured Test" className={styles.preview} />
+            )}
 
-      setPhValue(closestPh);
-    };
-  }, [capturedImage]);
+            {closestPh ? (
+                <div className={styles.resultBox}>
+                    <p>Определённый уровень pH:</p>
+                    <h2>pH {closestPh}</h2>
+                </div>
+            ) : (
+                <p>Анализ изображения...</p>
+            )}
 
-  const handleExportZip = async () => {
-    const data = { phValue, date: new Date().toLocaleString(), confidence: "98%" };
-    const zip = new JSZip();
-    zip.file("ph_results.json", JSON.stringify(data, null, 2));
-    const content = await zip.generateAsync({ type: "blob" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(content);
-    link.download = "ph_results.zip";
-    link.click();
-    URL.revokeObjectURL(link.href);
-  };
-
-  const handleTalkToDoctor = () => window.open("https://phera.digital/doctor", "_blank");
-
-  return (
-    <div className={styles.wrapResultPage}>
-      <div className={styles.content}>
-        {capturedImage && (
-          <div className={styles.capturedImageWrap}>
-            <img src={capturedImage} alt="Captured pH strip" className={styles.capturedImage} />
-          </div>
-        )}
-
-        <div className={styles.ph}>
-          <p className={styles.phTitle}>Your pH</p>
-          <p className={styles.phValue}>{phValue !== null ? phValue.toFixed(1) : "…"}</p>
+            <button  className={styles.backBtn}>
+                ← Назад
+            </button>
         </div>
-
-        <div className={styles.processingResults}>
-          <button className={styles.btn} onClick={handleExportZip}>
-            <img src={exportSvg} alt="export" /> Export Results
-          </button>
-          <button className={styles.btn} onClick={() => setIsDataSharingActive(prev => !prev)}>
-            <img src={isDataSharingActive ? checkedYes : checkedNo} alt="check" /> Share Data
-          </button>
-          <button className={styles.btn} onClick={handleTalkToDoctor}>
-            <img src={talk} alt="talk to a Doctor" /> Talk to a Doctor
-          </button>
-        </div>
-
-        <div className={styles.personalData}>
-          <PersonalData
-            isActive={isDataSharingActive}
-            age={age}
-            setAge={setAge}
-            hormone={hormone}
-            setHormone={setHormone}
-            ancestral={ancestral}
-            setAncestral={setAncestral}
-          />
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default ResultPage;
