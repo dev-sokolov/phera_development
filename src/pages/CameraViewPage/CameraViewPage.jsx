@@ -36,7 +36,8 @@ const CameraViewPage = ({ onCapture, onExit }) => {
             const canvas = document.createElement("canvas");
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            const ctx = canvas.getContext("2d");
+            // const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext("2d", { willReadFrequently: true });
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
@@ -200,7 +201,8 @@ const CameraViewPage = ({ onCapture, onExit }) => {
             const canvas = document.createElement("canvas");
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            const ctx = canvas.getContext("2d");
+            // const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext("2d", { willReadFrequently: true });
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
