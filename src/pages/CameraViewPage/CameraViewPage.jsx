@@ -654,6 +654,985 @@
 // -----------------------------------------------------------
 
 
+// import { useRef, useState, useEffect } from "react";
+// import Lottie from "lottie-react";
+// import Webcam from "react-webcam";
+// import styles from "./CameraViewPage.module.css";
+// import notificationSound from "../../assets/sounds/notification.mp3";
+// import processing_6 from "../../assets/lottie/processing_6.json";
+
+// const CameraViewPage = ({ onCapture, onExit }) => {
+//     const webcamRef = useRef(null);
+//     const [isReady, setIsReady] = useState(false);
+//     const [isProcessing, setIsProcessing] = useState(false);
+//     const [errorMessage, setErrorMessage] = useState("");
+//     const [hasFourMarkers, setHasFourMarkers] = useState(false);
+
+//     // Останавливаем поток камеры
+//     const stopCamera = () => {
+//         const video = webcamRef.current?.video;
+//         const tracks = video?.srcObject?.getTracks();
+//         tracks?.forEach((track) => track.stop());
+//     };
+
+//     // Звук уведомления
+//     const playClickSound = () => {
+//         const audio = new Audio(notificationSound);
+//         audio.play().catch(() => { });
+//     };
+
+//     // Захват и отправка полного изображения!!!!!!!!!!!!!!!!!!!!!!!не удалять!!!!!!!!!!!!
+//     // const handleCapture = async () => {
+//     //     if (!webcamRef.current) return;
+
+//     //     setIsProcessing(true);
+//     //     playClickSound();
+
+//     //     try {
+//     //         const screenshot = webcamRef.current.getScreenshot({
+//     //             width: 1920,
+//     //             height: 1080,
+//     //         });
+
+//     //         if (!screenshot) {
+//     //             throw new Error("Не удалось сделать снимок. Попробуйте ещё раз.");
+//     //         }
+
+//     //         const blob = await fetch(screenshot).then((r) => r.blob());
+//     //         const formData = new FormData();
+//     //         formData.append("image", blob, "capture.png");
+
+//     //         // Отправляем на backend
+//     //         const response = await fetch("https://your-backend-api.com/upload", {
+//     //             method: "POST",
+//     //             body: formData,
+//     //         });
+
+//     //         if (!response.ok) throw new Error("Ошибка при загрузке изображения");
+
+//     //         const result = await response.json();
+//     //         stopCamera();
+//     //         if (onUploadSuccess) onUploadSuccess(result);
+//     //     } catch (error) {
+//     //         console.error(error);
+//     //         setErrorMessage(error.message || "Ошибка при захвате изображения");
+//     //         setTimeout(() => setErrorMessage(""), 3000);
+//     //     } finally {
+//     //         setIsProcessing(false);
+//     //     }
+//     // };
+
+//     // 🚀 Временно заменяем upload-запрос на mock!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//     const handleCapture = async () => {
+//         if (!webcamRef.current) return;
+
+//         if (!hasFourMarkers) {
+//             setErrorMessage("Unable to detect the test card. Please try again.");
+//             setTimeout(() => setErrorMessage(""), 3000);
+//             return; // Блокируем дальнейшее выполнение
+//         }
+
+//         setIsProcessing(true);
+//         playClickSound();
+
+//         try {
+//             const screenshot = webcamRef.current.getScreenshot({
+//                 width: 1920,
+//                 height: 1080,
+//             });
+
+//             if (!screenshot) {
+//                 throw new Error("Не удалось сделать снимок. Попробуйте ещё раз.");
+//             }
+
+//             // ⏳ Здесь имитация ожидания запроса
+//             await new Promise((resolve) => setTimeout(resolve, 1500));
+
+//             // 📦 Заглушка данных, которые как будто пришли с сервера
+//             const fakeResult = {
+//                 phValue: 4.3,
+//                 date: new Date().toLocaleString(),
+//                 confidence: "98%",
+//                 image: screenshot, // Можно передать сам снимок
+//             };
+
+//             // 🧩 Закрываем камеру и передаём результат вверх
+//             stopCamera();
+//             if (onCapture) onCapture(fakeResult);
+
+//         } catch (error) {
+//             console.error(error);
+//             setErrorMessage(error.message || "Ошибка при захвате изображения");
+//             setTimeout(() => setErrorMessage(""), 3000);
+//         } finally {
+//             setIsProcessing(false);
+//         }
+//     };
+
+
+//     const handleUserMedia = () => {
+//         setTimeout(() => setIsReady(true), 200);
+//     };
+
+//     // 👁️ Отслеживание маркеров — только для эффекта фокуса
+//     useEffect(() => {
+//         if (!isReady) return;
+
+//         const interval = setInterval(() => {
+//             const video = webcamRef.current?.video;
+//             if (!video) return;
+
+//             const canvas = document.createElement("canvas");
+//             canvas.width = video.videoWidth;
+//             canvas.height = video.videoHeight;
+//             const ctx = canvas.getContext("2d", { willReadFrequently: true });
+//             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+//             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+//             const src = cv.matFromImageData(imgData);
+//             const gray = new cv.Mat();
+//             const thresh = new cv.Mat();
+//             const contours = new cv.MatVector();
+//             const hierarchy = new cv.Mat();
+
+//             try {
+//                 cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+//                 cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+//                 cv.adaptiveThreshold(
+//                     gray,
+//                     thresh,
+//                     255,
+//                     cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+//                     cv.THRESH_BINARY_INV,
+//                     15,
+//                     4
+//                 );
+
+//                 cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+//                 const squares = [];
+//                 for (let i = 0; i < contours.size(); i++) {
+//                     const cnt = contours.get(i);
+//                     const approx = new cv.Mat();
+//                     cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+//                     if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+//                         const rect = cv.boundingRect(approx);
+//                         const aspect = rect.width / rect.height;
+//                         if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+//                     }
+
+//                     cnt.delete();
+//                     approx.delete();
+//                 }
+
+//                 setHasFourMarkers(squares.length >= 4);
+//             } catch (e) {
+//                 console.warn("OpenCV detection error:", e);
+//             } finally {
+//                 src.delete();
+//                 gray.delete();
+//                 thresh.delete();
+//                 contours.delete();
+//                 hierarchy.delete();
+//             }
+//         }, 700);
+
+//         return () => clearInterval(interval);
+//     }, [isReady]);
+
+//     useEffect(() => {
+//         return () => stopCamera();
+//     }, []);
+
+//     useEffect(() => {
+//         if (hasFourMarkers && navigator.vibrate) navigator.vibrate(100);
+//     }, [hasFourMarkers]);
+
+//     // ----------------------------------------------------------
+
+//     return (
+//         <div className={styles.cameraContainer}>
+//             {/* затемнение при фокусе */}
+//             <div
+//                 className={`${styles.overlayBackground} ${hasFourMarkers ? styles.focused : ""
+//                     }`}
+//             ></div>
+
+//             {/* Камера */}
+//             <Webcam
+//                 ref={webcamRef}
+//                 audio={false}
+//                 screenshotFormat="image/png"
+//                 videoConstraints={{
+//                     facingMode: "environment",
+//                     width: { ideal: 1920 },
+//                     height: { ideal: 1080 },
+//                 }}
+//                 className={`${styles.webcamVideo} ${isReady ? styles.show : ""}`}
+//                 onUserMedia={handleUserMedia}
+//                 playsInline
+//             />
+
+//             {/* Верхние кнопки */}
+//             <div className={styles.topControls}>
+//                 <button
+//                     className={styles.exitBtn}
+//                     onClick={() => {
+//                         stopCamera();
+//                         onExit();
+//                     }}
+//                     aria-label="Exit to home"
+//                 >
+//                     X
+//                 </button>
+//             </div>
+
+//             {/* 🟨 Рамка фокуса */}
+//             <div
+//                 className={`${styles.viewfinder} ${hasFourMarkers ? styles.detected : ""
+//                     }`}
+//             >
+//                 <div className={styles["bottom-left"]}></div>
+//                 <div className={styles["bottom-right"]}></div>
+//             </div>
+
+//             {/* Ошибки */}
+//             {errorMessage && (
+//                 <div className={styles.errorMessage}>{errorMessage}</div>
+//             )}
+
+//             {/* Кнопка и анимация */}
+//             <div className={styles.wrapBtn}>
+//                 <button
+//                     className={`${styles.scanBtn} ${hasFourMarkers ? styles.detected : ""
+//                         }`}
+//                     onClick={handleCapture}
+//                     style={{ opacity: isProcessing ? 0 : 1 }}
+//                 ></button>
+
+//                 <Lottie
+//                     key={isProcessing ? "processing" : "idle"}
+//                     animationData={processing_6}
+//                     loop={false}
+//                     style={{
+//                         width: "80px",
+//                         height: "80px",
+//                         position: "absolute",
+//                         top: "50%",
+//                         left: "50%",
+//                         transform: "translate(-50%, -50%)",
+//                         opacity: isProcessing ? 1 : 0,
+//                         pointerEvents: "none",
+//                         filter: "brightness(0) invert(1)",
+//                     }}
+//                 />
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default CameraViewPage;
+
+
+// -------------------------------------------------------
+
+// import { useRef, useState, useEffect } from "react";
+// import Lottie from "lottie-react";
+// import Webcam from "react-webcam";
+// import styles from "./CameraViewPage.module.css";
+// import notificationSound from "../../assets/sounds/notification.mp3";
+// import processing_6 from "../../assets/lottie/processing_6.json";
+
+// const CameraViewPage = ({ onCapture, onExit }) => {
+//     const webcamRef = useRef(null);
+//     const [isReady, setIsReady] = useState(false);
+//     const [isProcessing, setIsProcessing] = useState(false);
+//     const [errorMessage, setErrorMessage] = useState("");
+//     const [hasFourMarkers, setHasFourMarkers] = useState(false);
+
+//     const errorTimeoutRef = useRef(null); // 💡 Таймер для ошибок
+
+//     // -----------------------------------------
+//     const stopCamera = () => {
+//         const video = webcamRef.current?.video;
+//         const tracks = video?.srcObject?.getTracks();
+//         tracks?.forEach((track) => track.stop());
+//     };
+
+//     const playClickSound = () => {
+//         const audio = new Audio(notificationSound);
+//         audio.play().catch(() => { });
+//     };
+
+//     // 💡 Функция для показа ошибок с таймером
+//     const showError = (msg) => {
+//         setErrorMessage(msg);
+//         if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current);
+
+//         errorTimeoutRef.current = setTimeout(() => {
+//             setErrorMessage("");
+//             errorTimeoutRef.current = null;
+//         }, 3000);
+//     };
+
+//     const handleCapture = async () => {
+//         if (!webcamRef.current) return;
+
+//         if (!hasFourMarkers) {
+//             showError("Unable to detect the test card. Please try again.");
+//             return;
+//         }
+
+//         setIsProcessing(true);
+//         playClickSound();
+
+//         try {
+//             const screenshot = webcamRef.current.getScreenshot({
+//                 width: 1920,
+//                 height: 1080,
+//             });
+
+//             if (!screenshot) throw new Error("Unable to capture the image.");
+
+//             await new Promise((resolve) => setTimeout(resolve, 1500));
+
+//             const fakeResult = {
+//                 phValue: 4.3,
+//                 date: new Date().toLocaleString(),
+//                 confidence: "98%",
+//                 image: screenshot,
+//             };
+
+//             stopCamera();
+//             if (onCapture) onCapture(fakeResult);
+
+//         } catch (error) {
+//             console.error(error);
+//             showError(error.message || "Error capturing the image");
+//         } finally {
+//             setIsProcessing(false);
+//         }
+//     };
+
+//     const handleUserMedia = () => {
+//         setTimeout(() => setIsReady(true), 200);
+//     };
+
+//     useEffect(() => {
+//         if (!isReady) return;
+
+//         const interval = setInterval(() => {
+//             const video = webcamRef.current?.video;
+//             if (!video) return;
+
+//             const canvas = document.createElement("canvas");
+//             canvas.width = video.videoWidth;
+//             canvas.height = video.videoHeight;
+//             const ctx = canvas.getContext("2d", { willReadFrequently: true });
+//             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+//             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+//             const src = cv.matFromImageData(imgData);
+//             const gray = new cv.Mat();
+//             const thresh = new cv.Mat();
+//             const contours = new cv.MatVector();
+//             const hierarchy = new cv.Mat();
+
+//             try {
+//                 cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+//                 cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+//                 cv.adaptiveThreshold(
+//                     gray,
+//                     thresh,
+//                     255,
+//                     cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+//                     cv.THRESH_BINARY_INV,
+//                     15,
+//                     4
+//                 );
+
+//                 cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+//                 const squares = [];
+//                 for (let i = 0; i < contours.size(); i++) {
+//                     const cnt = contours.get(i);
+//                     const approx = new cv.Mat();
+//                     cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+//                     if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+//                         const rect = cv.boundingRect(approx);
+//                         const aspect = rect.width / rect.height;
+//                         if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+//                     }
+
+//                     cnt.delete();
+//                     approx.delete();
+//                 }
+
+//                 setHasFourMarkers(squares.length >= 4);
+//             } catch (e) {
+//                 console.warn("OpenCV detection error:", e);
+//             } finally {
+//                 src.delete();
+//                 gray.delete();
+//                 thresh.delete();
+//                 contours.delete();
+//                 hierarchy.delete();
+//             }
+//         }, 700);
+
+//         return () => clearInterval(interval);
+//     }, [isReady]);
+
+//     useEffect(() => {
+//         return () => stopCamera();
+//     }, []);
+
+//     useEffect(() => {
+//         if (hasFourMarkers && navigator.vibrate) navigator.vibrate(100);
+//     }, [hasFourMarkers]);
+
+//     // ----------------------------------------------------------
+
+//     return (
+//         <div className={styles.cameraContainer}>
+//             <div className={`${styles.overlayBackground} ${hasFourMarkers ? styles.focused : ""}`}></div>
+
+//             <Webcam
+//                 ref={webcamRef}
+//                 audio={false}
+//                 screenshotFormat="image/png"
+//                 videoConstraints={{
+//                     facingMode: "environment",
+//                     width: { ideal: 1920 },
+//                     height: { ideal: 1080 },
+//                 }}
+//                 className={`${styles.webcamVideo} ${isReady ? styles.show : ""}`}
+//                 onUserMedia={handleUserMedia}
+//                 playsInline
+//             />
+
+//             <div className={styles.topControls}>
+//                 <button
+//                     className={styles.exitBtn}
+//                     onClick={() => {
+//                         stopCamera();
+//                         onExit();
+//                     }}
+//                     aria-label="Exit to home"
+//                 >
+//                     X
+//                 </button>
+//             </div>
+
+//             <div className={`${styles.viewfinder} ${hasFourMarkers ? styles.detected : ""}`}>
+//                 <div className={styles["bottom-left"]}></div>
+//                 <div className={styles["bottom-right"]}></div>
+//             </div>
+
+//             {/* 💡 Ошибка */}
+//             {errorMessage && (
+//                 <div key={errorMessage} className={styles.errorMessage}>
+//                     {errorMessage}
+//                 </div>
+//             )}
+
+//             <div className={styles.wrapBtn}>
+//                 <button
+//                     className={`${styles.scanBtn} ${hasFourMarkers ? styles.detected : ""}`}
+//                     onClick={handleCapture}
+//                     style={{ opacity: isProcessing ? 0 : 1 }}
+//                 ></button>
+
+//                 <Lottie
+//                     key={isProcessing ? "processing" : "idle"}
+//                     animationData={processing_6}
+//                     loop={false}
+//                     style={{
+//                         width: "80px",
+//                         height: "80px",
+//                         position: "absolute",
+//                         top: "50%",
+//                         left: "50%",
+//                         transform: "translate(-50%, -50%)",
+//                         opacity: isProcessing ? 1 : 0,
+//                         pointerEvents: "none",
+//                         filter: "brightness(0) invert(1)",
+//                     }}
+//                 />
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default CameraViewPage;
+
+// import { useRef, useState, useEffect } from "react";
+// import Lottie from "lottie-react";
+// import Webcam from "react-webcam";
+// import styles from "./CameraViewPage.module.css";
+// import notificationSound from "../../assets/sounds/notification.mp3";
+// import processing_6 from "../../assets/lottie/processing_6.json";
+
+// const CameraViewPage = ({ onCapture, onExit }) => {
+//     const webcamRef = useRef(null);
+//     const [isReady, setIsReady] = useState(false);
+//     const [isProcessing, setIsProcessing] = useState(false);
+//     const [errorMessage, setErrorMessage] = useState("");
+//     const [errorVisible, setErrorVisible] = useState(false); // Флаг показа ошибки
+//     const [hasFourMarkers, setHasFourMarkers] = useState(false);
+
+//     // Останавливаем поток камеры
+//     const stopCamera = () => {
+//         const video = webcamRef.current?.video;
+//         const tracks = video?.srcObject?.getTracks();
+//         tracks?.forEach((track) => track.stop());
+//     };
+
+//     // Звук уведомления
+//     const playClickSound = () => {
+//         const audio = new Audio(notificationSound);
+//         audio.play().catch(() => { });
+//     };
+
+//     // Функция показа ошибки (только один раз за 3 секунды)
+//     const showError = (msg) => {
+//         if (errorVisible) return; // игнорируем повторные вызовы
+//         setErrorVisible(true);
+//         setErrorMessage(msg);
+//         setTimeout(() => {
+//             setErrorVisible(false);
+//             setErrorMessage("");
+//         }, 3000);
+//     };
+
+//     // Захват изображения
+//     const handleCapture = async () => {
+//         if (!webcamRef.current) return;
+
+//         if (!hasFourMarkers) {
+//             showError("Unable to detect the test card. Please try again.");
+//             return; // Блокируем захват без карточки
+//         }
+
+//         setIsProcessing(true);
+//         playClickSound();
+
+//         try {
+//             const screenshot = webcamRef.current.getScreenshot({
+//                 width: 1920,
+//                 height: 1080,
+//             });
+
+//             if (!screenshot) {
+//                 throw new Error("Failed to capture image. Please try again.");
+//             }
+
+//             // Имитация запроса
+//             await new Promise((resolve) => setTimeout(resolve, 1500));
+
+//             const fakeResult = {
+//                 phValue: 4.3,
+//                 date: new Date().toLocaleString(),
+//                 confidence: "98%",
+//                 image: screenshot,
+//             };
+
+//             stopCamera();
+//             if (onCapture) onCapture(fakeResult);
+
+//         } catch (error) {
+//             showError(error.message || "Failed to capture image.");
+//         } finally {
+//             setIsProcessing(false);
+//         }
+//     };
+
+//     const handleUserMedia = () => {
+//         setTimeout(() => setIsReady(true), 200);
+//     };
+
+//     // Отслеживание маркеров для фокуса
+//     useEffect(() => {
+//         if (!isReady) return;
+
+//         const interval = setInterval(() => {
+//             const video = webcamRef.current?.video;
+//             if (!video) return;
+
+//             const canvas = document.createElement("canvas");
+//             canvas.width = video.videoWidth;
+//             canvas.height = video.videoHeight;
+//             const ctx = canvas.getContext("2d", { willReadFrequently: true });
+//             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+//             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+//             const src = cv.matFromImageData(imgData);
+//             const gray = new cv.Mat();
+//             const thresh = new cv.Mat();
+//             const contours = new cv.MatVector();
+//             const hierarchy = new cv.Mat();
+
+//             try {
+//                 cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+//                 cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+//                 cv.adaptiveThreshold(
+//                     gray,
+//                     thresh,
+//                     255,
+//                     cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+//                     cv.THRESH_BINARY_INV,
+//                     15,
+//                     4
+//                 );
+
+//                 cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+//                 const squares = [];
+//                 for (let i = 0; i < contours.size(); i++) {
+//                     const cnt = contours.get(i);
+//                     const approx = new cv.Mat();
+//                     cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+//                     if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+//                         const rect = cv.boundingRect(approx);
+//                         const aspect = rect.width / rect.height;
+//                         if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+//                     }
+
+//                     cnt.delete();
+//                     approx.delete();
+//                 }
+
+//                 setHasFourMarkers(squares.length >= 4);
+//             } catch (e) {
+//                 console.warn("OpenCV detection error:", e);
+//             } finally {
+//                 src.delete();
+//                 gray.delete();
+//                 thresh.delete();
+//                 contours.delete();
+//                 hierarchy.delete();
+//             }
+//         }, 700);
+
+//         return () => clearInterval(interval);
+//     }, [isReady]);
+
+//     useEffect(() => {
+//         return () => stopCamera();
+//     }, []);
+
+//     useEffect(() => {
+//         if (hasFourMarkers && navigator.vibrate) navigator.vibrate(100);
+//     }, [hasFourMarkers]);
+
+//     return (
+//         <div className={styles.cameraContainer}>
+//             <div className={`${styles.overlayBackground} ${hasFourMarkers ? styles.focused : ""}`}></div>
+
+//             <Webcam
+//                 ref={webcamRef}
+//                 audio={false}
+//                 screenshotFormat="image/png"
+//                 videoConstraints={{ facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } }}
+//                 className={`${styles.webcamVideo} ${isReady ? styles.show : ""}`}
+//                 onUserMedia={handleUserMedia}
+//                 playsInline
+//             />
+
+//             <div className={styles.topControls}>
+//                 <button
+//                     className={styles.exitBtn}
+//                     onClick={() => {
+//                         stopCamera();
+//                         onExit();
+//                     }}
+//                     aria-label="Exit to home"
+//                 >
+//                     X
+//                 </button>
+//             </div>
+
+//             <div className={`${styles.viewfinder} ${hasFourMarkers ? styles.detected : ""}`}>
+//                 <div className={styles["bottom-left"]}></div>
+//                 <div className={styles["bottom-right"]}></div>
+//             </div>
+
+//             {errorMessage && (
+//                 <div className={styles.errorMessage}>{errorMessage}</div>
+//             )}
+
+//             <div className={styles.wrapBtn}>
+//                 <button
+//                     className={`${styles.scanBtn} ${hasFourMarkers ? styles.detected : ""}`}
+//                     onClick={handleCapture}
+//                     style={{ opacity: isProcessing ? 0 : 1 }}
+//                 ></button>
+
+//                 <Lottie
+//                     key={isProcessing ? "processing" : "idle"}
+//                     animationData={processing_6}
+//                     loop={false}
+//                     style={{
+//                         width: "80px",
+//                         height: "80px",
+//                         position: "absolute",
+//                         top: "50%",
+//                         left: "50%",
+//                         transform: "translate(-50%, -50%)",
+//                         opacity: isProcessing ? 1 : 0,
+//                         pointerEvents: "none",
+//                         filter: "brightness(0) invert(1)",
+//                     }}
+//                 />
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default CameraViewPage;
+
+
+// ------------------------------------------------
+
+
+// import { useRef, useState, useEffect } from "react";
+// import Lottie from "lottie-react";
+// import Webcam from "react-webcam";
+// import styles from "./CameraViewPage.module.css";
+// import notificationSound from "../../assets/sounds/notification.mp3";
+// import processing_6 from "../../assets/lottie/processing_6.json";
+
+// const CameraViewPage = ({ onCapture, onExit }) => {
+//     const webcamRef = useRef(null);
+//     const [isReady, setIsReady] = useState(false);
+//     const [isProcessing, setIsProcessing] = useState(false);
+//     const [errorMessage, setErrorMessage] = useState("");
+//     const [errorVisible, setErrorVisible] = useState(false);
+//     const [hasFourMarkers, setHasFourMarkers] = useState(false);
+
+//     const stopCamera = () => {
+//         const video = webcamRef.current?.video;
+//         const tracks = video?.srcObject?.getTracks();
+//         tracks?.forEach((track) => track.stop());
+//     };
+
+//     const playClickSound = () => {
+//         const audio = new Audio(notificationSound);
+//         audio.play().catch(() => {});
+//     };
+
+//     const showError = (msg) => {
+//         if (errorVisible) return;
+//         setErrorVisible(true);
+//         setErrorMessage(msg);
+//         setTimeout(() => {
+//             setErrorVisible(false);
+//             setErrorMessage("");
+//         }, 3000);
+//     };
+
+//     const handleCapture = async () => {
+//         if (!webcamRef.current) return;
+
+//         if (!hasFourMarkers) {
+//             showError("Unable to detect the test card. Please try again.");
+//             return;
+//         }
+
+//         setIsProcessing(true);
+//         playClickSound();
+
+//         try {
+//             const screenshot = webcamRef.current.getScreenshot({
+//                 width: 1920,
+//                 height: 1080,
+//             });
+
+//             if (!screenshot) throw new Error("Failed to capture image.");
+
+//             // имитация запроса
+//             await new Promise((resolve) => setTimeout(resolve, 1500));
+
+//             const fakeResult = {
+//                 phValue: 4.3,
+//                 date: new Date().toLocaleString(),
+//                 confidence: "98%",
+//                 image: screenshot,
+//             };
+
+//             stopCamera();
+//             if (onCapture) onCapture(fakeResult);
+
+//         } catch (error) {
+//             showError(error.message || "Failed to capture image.");
+//         } finally {
+//             setIsProcessing(false);
+//         }
+//     };
+
+//     const handleUserMedia = () => {
+//         setTimeout(() => setIsReady(true), 200);
+//     };
+
+//     useEffect(() => {
+//         if (!isReady) return;
+
+//         const interval = setInterval(() => {
+//             const video = webcamRef.current?.video;
+//             if (!video) return;
+
+//             const canvas = document.createElement("canvas");
+//             canvas.width = video.videoWidth;
+//             canvas.height = video.videoHeight;
+//             const ctx = canvas.getContext("2d", { willReadFrequently: true });
+//             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+//             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+//             const src = cv.matFromImageData(imgData);
+//             const gray = new cv.Mat();
+//             const thresh = new cv.Mat();
+//             const contours = new cv.MatVector();
+//             const hierarchy = new cv.Mat();
+
+//             try {
+//                 cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+//                 cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+//                 cv.adaptiveThreshold(
+//                     gray,
+//                     thresh,
+//                     255,
+//                     cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+//                     cv.THRESH_BINARY_INV,
+//                     15,
+//                     4
+//                 );
+
+//                 cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+//                 const squares = [];
+//                 for (let i = 0; i < contours.size(); i++) {
+//                     const cnt = contours.get(i);
+//                     const approx = new cv.Mat();
+//                     cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+//                     if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+//                         const rect = cv.boundingRect(approx);
+//                         const aspect = rect.width / rect.height;
+//                         if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+//                     }
+
+//                     cnt.delete();
+//                     approx.delete();
+//                 }
+
+//                 setHasFourMarkers(squares.length >= 4);
+//             } catch (e) {
+//                 console.warn("OpenCV detection error:", e);
+//             } finally {
+//                 src.delete();
+//                 gray.delete();
+//                 thresh.delete();
+//                 contours.delete();
+//                 hierarchy.delete();
+//             }
+//         }, 700);
+
+//         return () => clearInterval(interval);
+//     }, [isReady]);
+
+//     useEffect(() => {
+//         return () => stopCamera();
+//     }, []);
+
+//     useEffect(() => {
+//         if (hasFourMarkers && navigator.vibrate) navigator.vibrate(100);
+//     }, [hasFourMarkers]);
+
+//     return (
+//         <div className={styles.cameraContainer}>
+//             <div className={`${styles.overlayBackground} ${hasFourMarkers ? styles.focused : ""}`}></div>
+
+//             <Webcam
+//                 ref={webcamRef}
+//                 audio={false}
+//                 screenshotFormat="image/png"
+//                 videoConstraints={{ facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } }}
+//                 className={`${styles.webcamVideo} ${isReady ? styles.show : ""}`}
+//                 onUserMedia={handleUserMedia}
+//                 playsInline
+//             />
+
+//             <div className={styles.topControls}>
+//                 <button
+//                     className={styles.exitBtn}
+//                     onClick={() => {
+//                         stopCamera();
+//                         onExit();
+//                     }}
+//                     aria-label="Exit to home"
+//                 >
+//                     X
+//                 </button>
+//             </div>
+
+//             {/* Viewfinder */}
+//             <div className={`${styles.viewfinder} ${hasFourMarkers ? styles.detected : ""}`}>
+//                 <div className={styles["bottom-left"]}></div>
+//                 <div className={styles["bottom-right"]}></div>
+//             </div>
+
+//             {/* Подсказка для пользователя */}
+//             {!hasFourMarkers && !isProcessing && (
+//                 <div className={styles.hintMessage}>
+//                     Align the camera with your test card
+//                 </div>
+//             )}
+
+//             {/* Ошибки */}
+//             {errorMessage && (
+//                 <div className={styles.errorMessage}>{errorMessage}</div>
+//             )}
+
+//             <div className={styles.wrapBtn}>
+//                 <button
+//                     className={`${styles.scanBtn} ${hasFourMarkers ? styles.detected : ""}`}
+//                     onClick={handleCapture}
+//                     disabled={!hasFourMarkers || isProcessing}
+//                     style={{
+//                         opacity: hasFourMarkers ? 1 : 0.5,
+//                         cursor: (!hasFourMarkers || isProcessing) ? 'not-allowed' : 'pointer'
+//                     }}
+//                 ></button>
+
+//                 <Lottie
+//                     key={isProcessing ? "processing" : "idle"}
+//                     animationData={processing_6}
+//                     loop={false}
+//                     style={{
+//                         width: "80px",
+//                         height: "80px",
+//                         position: "absolute",
+//                         top: "50%",
+//                         left: "50%",
+//                         transform: "translate(-50%, -50%)",
+//                         opacity: isProcessing ? 1 : 0,
+//                         pointerEvents: "none",
+//                         filter: "brightness(0) invert(1)",
+//                     }}
+//                 />
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default CameraViewPage;
+
+
+// ----------------------------------------------------
+
 import { useRef, useState, useEffect } from "react";
 import Lottie from "lottie-react";
 import Webcam from "react-webcam";
@@ -661,29 +1640,68 @@ import styles from "./CameraViewPage.module.css";
 import notificationSound from "../../assets/sounds/notification.mp3";
 import processing_6 from "../../assets/lottie/processing_6.json";
 
-const CameraViewPage = ({ onUploadSuccess, onExit }) => {
+const CameraViewPage = ({ onCapture, onExit }) => {
     const webcamRef = useRef(null);
     const [isReady, setIsReady] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
     const [hasFourMarkers, setHasFourMarkers] = useState(false);
 
-    // Останавливаем поток камеры
     const stopCamera = () => {
         const video = webcamRef.current?.video;
         const tracks = video?.srcObject?.getTracks();
         tracks?.forEach((track) => track.stop());
     };
 
-    // Звук уведомления
     const playClickSound = () => {
         const audio = new Audio(notificationSound);
         audio.play().catch(() => { });
     };
 
-    // Захват и отправка полного изображения
+    //   Захват и отправка полного изображения!!!!!!!!!!!!!!!!!!!!!!!не удалять!!!!!!!!!!!!
+    // const handleCapture = async () => {
+    //     if (!webcamRef.current) return;
+
+    //     setIsProcessing(true);
+    //     playClickSound();
+
+    //     try {
+    //         const screenshot = webcamRef.current.getScreenshot({
+    //             width: 1920,
+    //             height: 1080,
+    //         });
+
+    //         if (!screenshot) {
+    //             throw new Error("Не удалось сделать снимок. Попробуйте ещё раз.");
+    //         }
+
+    //         const blob = await fetch(screenshot).then((r) => r.blob());
+    //         const formData = new FormData();
+    //         formData.append("image", blob, "capture.png");
+
+    //         // Отправляем на backend
+    //         const response = await fetch("https://your-backend-api.com/upload", {
+    //             method: "POST",
+    //             body: formData,
+    //         });
+
+    //         if (!response.ok) throw new Error("Ошибка при загрузке изображения");
+
+    //         const result = await response.json();
+    //         stopCamera();
+    //         if (onUploadSuccess) onUploadSuccess(result);
+    //     } catch (error) {
+    //         console.error(error);
+    //         setErrorMessage(error.message || "Ошибка при захвате изображения");
+    //         setTimeout(() => setErrorMessage(""), 3000);
+    //     } finally {
+    //         setIsProcessing(false);
+    //     }
+    // };
+
+    // 🚀 Временно заменяем upload-запрос на mock!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     const handleCapture = async () => {
-        if (!webcamRef.current) return;
+        if (!webcamRef.current || !hasFourMarkers || isProcessing) return;
 
         setIsProcessing(true);
         playClickSound();
@@ -694,39 +1712,29 @@ const CameraViewPage = ({ onUploadSuccess, onExit }) => {
                 height: 1080,
             });
 
-            if (!screenshot) {
-                throw new Error("Не удалось сделать снимок. Попробуйте ещё раз.");
-            }
+            if (!screenshot) throw new Error("Failed to capture image.");
 
-            const blob = await fetch(screenshot).then((r) => r.blob());
-            const formData = new FormData();
-            formData.append("image", blob, "capture.png");
+            await new Promise((resolve) => setTimeout(resolve, 1500));
 
-            // Отправляем на backend
-            const response = await fetch("https://your-backend-api.com/upload", {
-                method: "POST",
-                body: formData,
-            });
+            const fakeResult = {
+                phValue: 4.3,
+                date: new Date().toLocaleString(),
+                confidence: "98%",
+                image: screenshot,
+            };
 
-            if (!response.ok) throw new Error("Ошибка при загрузке изображения");
-
-            const result = await response.json();
             stopCamera();
-            if (onUploadSuccess) onUploadSuccess(result);
+            if (onCapture) onCapture(fakeResult);
         } catch (error) {
             console.error(error);
-            setErrorMessage(error.message || "Ошибка при захвате изображения");
-            setTimeout(() => setErrorMessage(""), 3000);
         } finally {
             setIsProcessing(false);
         }
     };
 
-    const handleUserMedia = () => {
-        setTimeout(() => setIsReady(true), 200);
-    };
+    const handleUserMedia = () => setTimeout(() => setIsReady(true), 200);
 
-    // 👁️ Отслеживание маркеров — только для эффекта фокуса
+    // Маркеры для рамки фокуса
     useEffect(() => {
         if (!isReady) return;
 
@@ -801,26 +1809,15 @@ const CameraViewPage = ({ onUploadSuccess, onExit }) => {
         if (hasFourMarkers && navigator.vibrate) navigator.vibrate(100);
     }, [hasFourMarkers]);
 
-    // ----------------------------------------------------------
-
     return (
         <div className={styles.cameraContainer}>
-            {/* затемнение при фокусе */}
-            <div
-                className={`${styles.overlayBackground} ${hasFourMarkers ? styles.focused : ""
-                    }`}
-            ></div>
+            <div className={`${styles.overlayBackground} ${hasFourMarkers ? styles.focused : ""}`}></div>
 
-            {/* Камера */}
             <Webcam
                 ref={webcamRef}
                 audio={false}
                 screenshotFormat="image/png"
-                videoConstraints={{
-                    facingMode: "environment",
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 },
-                }}
+                videoConstraints={{ facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } }}
                 className={`${styles.webcamVideo} ${isReady ? styles.show : ""}`}
                 onUserMedia={handleUserMedia}
                 playsInline
@@ -840,27 +1837,29 @@ const CameraViewPage = ({ onUploadSuccess, onExit }) => {
                 </button>
             </div>
 
-            {/* 🟨 Рамка фокуса */}
-            <div
-                className={`${styles.viewfinder} ${hasFourMarkers ? styles.detected : ""
-                    }`}
-            >
+            {/* Рамка фокуса */}
+            <div className={`${styles.viewfinder} ${hasFourMarkers ? styles.detected : ""}`}>
                 <div className={styles["bottom-left"]}></div>
                 <div className={styles["bottom-right"]}></div>
             </div>
 
-            {/* Ошибки */}
-            {errorMessage && (
-                <div className={styles.errorMessage}>{errorMessage}</div>
+            {/* Подсказка */}
+            {!hasFourMarkers && !isProcessing && (
+                <div className={styles.hintMessage}>
+                    Align the camera with your test card
+                </div>
             )}
 
-            {/* Кнопка и анимация */}
+            {/* Кнопка сканирования */}
             <div className={styles.wrapBtn}>
                 <button
-                    className={`${styles.scanBtn} ${hasFourMarkers ? styles.detected : ""
-                        }`}
+                    className={`${styles.scanBtn} ${hasFourMarkers ? styles.detected : ""}`}
                     onClick={handleCapture}
-                    style={{ opacity: isProcessing ? 0 : 1 }}
+                    disabled={!hasFourMarkers || isProcessing}
+                    style={{
+                        opacity: hasFourMarkers ? 1 : 0.5,
+                        cursor: (!hasFourMarkers || isProcessing) ? 'not-allowed' : 'pointer'
+                    }}
                 ></button>
 
                 <Lottie
