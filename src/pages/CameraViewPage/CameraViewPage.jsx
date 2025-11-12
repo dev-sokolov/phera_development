@@ -1918,7 +1918,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
             </div>
 
             {/* Подсказка */}
-            {!hasFourMarkers && !isProcessing && (
+            {/* {!hasFourMarkers && !isProcessing && (
                 <div className={styles.hintMessage}>
                     <div className={styles.hintMessageImg}><img src={alertCircle} alt="AlertCircle" /></div>
                     <div>
@@ -1927,7 +1927,16 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                     </div>
                     
                 </div>
-            )}
+            )} */}
+
+            <div className={styles.hintMessage}>
+                <div className={styles.hintMessageImg}><img src={alertCircle} alt="AlertCircle" /></div>
+                <div>
+                    <p className={styles.hintMessageTitle}>Align the test card in the frame</p>
+                    <p className={styles.hintMessageText}>Avoid colored light, fill the frame, hold steady. We will capture automatically.</p>
+                </div>
+
+            </div>
 
             {/* Кнопка сканирования */}
             <div className={styles.wrapBtn}>

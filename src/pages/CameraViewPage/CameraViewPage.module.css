@@ -303,7 +303,7 @@
 /* ------------------ Рамка фокуса ------------------ */
 .viewfinder {
   position: absolute;
-  top: 45%;
+  top: 50%;
   left: 50%;
   width: 80vw;
   height: 60vh;
@@ -375,7 +375,7 @@
 /* ------------------ Кнопка сканирования ------------------ */
 .wrapBtn {
   position: absolute;
-  top: calc(50% + 21vh);
+  top: calc(55% + 21vh);
   left: 50%;
   transform: translateX(-50%);
   width: 220px;
@@ -402,19 +402,21 @@
 /* ------------------ Подсказка ------------------ */
 .hintMessage {
   position: absolute;
-  top: 5%;
+  top: 10%;
   left: 50%;
   transform: translate(-50%, -50%);
   /* color: white; */
   /* background-color: rgba(0,0,0,0.5); */
-  background-color: rgb(255, 255, 255);
-  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.923);
+  padding: 16px;
+  margin-top: 20px;
   border-radius: 12px;
   font-size: 16px;
   /* text-align: center; */
   z-index: 1000;
   display: flex;
-  /* width: 400px; */
+  /* max-width: 400px; */
+  width: 80vw;
   gap: 10px;
 }
 
@@ -433,10 +435,11 @@
 .hintMessageTitle {
   font-size: 14px;
   color: #1D2530;
+  font-weight: 500;
 }
 
 .hintMessageText {
   font-size: 14px;
   color: #627084;
-  margin-top: 4px;
+  margin-top: 6px;
 }
