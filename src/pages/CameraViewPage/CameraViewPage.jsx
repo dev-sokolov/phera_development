@@ -1933,7 +1933,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 <div className={styles.hintMessageImg}><img src={alertCircle} alt="AlertCircle" /></div>
                 <div>
                     <p className={styles.hintMessageTitle}>Align the test card in the frame</p>
-                    <p className={styles.hintMessageText}>Avoid colored light, fill the frame, hold steady. We will capture automatically.</p>
+                    {/* <p className={styles.hintMessageText}>Avoid colored light, fill the frame, hold steady. We will capture automatically.</p> */}
                 </div>
 
             </div>
