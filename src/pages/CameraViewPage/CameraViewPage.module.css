@@ -407,7 +407,7 @@
   transform: translate(-50%, -50%);
   /* color: white; */
   /* background-color: rgba(0,0,0,0.5); */
-  background-color: rgba(255, 255, 255, 0.923);
+  background-color: rgba(255, 255, 255, 0.93);
   padding: 10px;
   margin-top: 20px;
   border-radius: 12px;
@@ -416,10 +416,21 @@
   z-index: 1000;
   display: flex;
   align-items: center;
+  /* align-items: flex-start; */
 
   /* max-width: 400px; */
-  /* width: 80vw; */
+  /* width: 65vw; */
   gap: 10px;
+
+  /* ✅ Контентная ширина, но с ограничением */
+  width: fit-content;
+  max-width: 80vw;
+  /* рамка примерно 80% экрана — совпадает с .viewfinder */
+  box-sizing: border-box;
+
+  /* Для аккуратных переносов */
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 .hintMessageImg {
