@@ -1639,6 +1639,7 @@ import Webcam from "react-webcam";
 import styles from "./CameraViewPage.module.css";
 import notificationSound from "../../assets/sounds/notification.mp3";
 import processing_6 from "../../assets/lottie/processing_6.json";
+import alertCircle from "../../assets/icons/alertCircle.svg";
 
 const CameraViewPage = ({ onCapture, onExit }) => {
     const webcamRef = useRef(null);
@@ -1735,25 +1736,97 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     const handleUserMedia = () => setTimeout(() => setIsReady(true), 200);
 
     // Маркеры для рамки фокуса
+    // useEffect(() => {
+    //     if (!isReady) return;
+
+    //     const interval = setInterval(() => {
+    //         const video = webcamRef.current?.video;
+    //         if (!video) return;
+
+    //         const canvas = document.createElement("canvas");
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    //         const src = cv.matFromImageData(imgData);
+    //         const gray = new cv.Mat();
+    //         const thresh = new cv.Mat();
+    //         const contours = new cv.MatVector();
+    //         const hierarchy = new cv.Mat();
+
+    //         try {
+    //             cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    //             cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+    //             cv.adaptiveThreshold(
+    //                 gray,
+    //                 thresh,
+    //                 255,
+    //                 cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+    //                 cv.THRESH_BINARY_INV,
+    //                 15,
+    //                 4
+    //             );
+
+    //             cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+    //             const squares = [];
+    //             for (let i = 0; i < contours.size(); i++) {
+    //                 const cnt = contours.get(i);
+    //                 const approx = new cv.Mat();
+    //                 cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+    //                 if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+    //                     const rect = cv.boundingRect(approx);
+    //                     const aspect = rect.width / rect.height;
+    //                     if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+    //                 }
+
+    //                 cnt.delete();
+    //                 approx.delete();
+    //             }
+
+    //             setHasFourMarkers(squares.length >= 4);
+    //         } catch (e) {
+    //             console.warn("OpenCV detection error:", e);
+    //         } finally {
+    //             src.delete();
+    //             gray.delete();
+    //             thresh.delete();
+    //             contours.delete();
+    //             hierarchy.delete();
+    //         }
+    //     }, 700);
+
+    //     return () => clearInterval(interval);
+    // }, [isReady]);
+
     useEffect(() => {
         if (!isReady) return;
 
+        const video = webcamRef.current?.video;
+        if (!video) return;
+
+        // Создаём canvas один раз
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+        // Маты OpenCV создаём один раз
+        const src = new cv.Mat(video.videoHeight, video.videoWidth, cv.CV_8UC4);
+        const gray = new cv.Mat();
+        const thresh = new cv.Mat();
+        const contours = new cv.MatVector();
+        const hierarchy = new cv.Mat();
+
         const interval = setInterval(() => {
-            const video = webcamRef.current?.video;
             if (!video) return;
 
-            const canvas = document.createElement("canvas");
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext("2d", { willReadFrequently: true });
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-            const src = cv.matFromImageData(imgData);
-            const gray = new cv.Mat();
-            const thresh = new cv.Mat();
-            const contours = new cv.MatVector();
-            const hierarchy = new cv.Mat();
+            src.data.set(imgData.data);
 
             try {
                 cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
@@ -1782,23 +1855,24 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                         if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
                     }
 
-                    cnt.delete();
                     approx.delete();
                 }
 
                 setHasFourMarkers(squares.length >= 4);
             } catch (e) {
                 console.warn("OpenCV detection error:", e);
-            } finally {
-                src.delete();
-                gray.delete();
-                thresh.delete();
-                contours.delete();
-                hierarchy.delete();
             }
         }, 700);
 
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            // Удаляем маты один раз при размонтировании
+            src.delete();
+            gray.delete();
+            thresh.delete();
+            contours.delete();
+            hierarchy.delete();
+        };
     }, [isReady]);
 
     useEffect(() => {
@@ -1846,7 +1920,12 @@ const CameraViewPage = ({ onCapture, onExit }) => {
             {/* Подсказка */}
             {!hasFourMarkers && !isProcessing && (
                 <div className={styles.hintMessage}>
-                    Align the camera with your test card
+                    <div className={styles.hintMessageImg}><img src={alertCircle} alt="AlertCircle" /></div>
+                    <div>
+                        <p className={styles.hintMessageTitle}>Align the test card in the frame</p>
+                        <p className={styles.hintMessageText}>Avoid colored light, fill the frame, hold steady. We will capture automatically.</p>
+                    </div>
+                    
                 </div>
             )}
 
