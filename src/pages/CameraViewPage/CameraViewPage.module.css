@@ -375,7 +375,7 @@
 /* ------------------ Кнопка сканирования ------------------ */
 .wrapBtn {
   position: absolute;
-  top: calc(55% + 21vh);
+  top: calc(54% + 21vh);
   left: 50%;
   transform: translateX(-50%);
   width: 220px;

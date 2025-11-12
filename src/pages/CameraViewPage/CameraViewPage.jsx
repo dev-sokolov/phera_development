@@ -1802,19 +1802,98 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     //     return () => clearInterval(interval);
     // }, [isReady]);
 
+    // useEffect(() => {
+    //     if (!isReady) return;
+
+    //     const video = webcamRef.current?.video;
+    //     if (!video) return;
+
+    //     // Создаём canvas один раз
+    //     const canvas = document.createElement("canvas");
+    //     canvas.width = video.videoWidth;
+    //     canvas.height = video.videoHeight;
+    //     const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+    //     // Маты OpenCV создаём один раз
+    //     const src = new cv.Mat(video.videoHeight, video.videoWidth, cv.CV_8UC4);
+    //     const gray = new cv.Mat();
+    //     const thresh = new cv.Mat();
+    //     const contours = new cv.MatVector();
+    //     const hierarchy = new cv.Mat();
+
+    //     const interval = setInterval(() => {
+    //         if (!video) return;
+
+    //         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    //         const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    //         src.data.set(imgData.data);
+
+    //         try {
+    //             cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    //             cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
+    //             cv.adaptiveThreshold(
+    //                 gray,
+    //                 thresh,
+    //                 255,
+    //                 cv.ADAPTIVE_THRESH_GAUSSIAN_C,
+    //                 cv.THRESH_BINARY_INV,
+    //                 15,
+    //                 4
+    //             );
+
+    //             cv.findContours(thresh, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+    //             const squares = [];
+    //             for (let i = 0; i < contours.size(); i++) {
+    //                 const cnt = contours.get(i);
+    //                 const approx = new cv.Mat();
+    //                 cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+
+    //                 if (approx.rows === 4 && cv.contourArea(approx) > 1000) {
+    //                     const rect = cv.boundingRect(approx);
+    //                     const aspect = rect.width / rect.height;
+    //                     if (aspect > 0.6 && aspect < 1.4) squares.push(rect);
+    //                 }
+
+    //                 approx.delete();
+    //             }
+
+    //             setHasFourMarkers(squares.length >= 4);
+    //         } catch (e) {
+    //             console.warn("OpenCV detection error:", e);
+    //         }
+    //     }, 700);
+
+    //     return () => {
+    //         clearInterval(interval);
+    //         // Удаляем маты один раз при размонтировании
+    //         src.delete();
+    //         gray.delete();
+    //         thresh.delete();
+    //         contours.delete();
+    //         hierarchy.delete();
+    //     };
+    // }, [isReady]);
+
     useEffect(() => {
         if (!isReady) return;
 
         const video = webcamRef.current?.video;
         if (!video) return;
 
-        // Создаём canvas один раз
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
+        const checkReady = setInterval(() => {
+            if (video.videoWidth > 0 && video.videoHeight > 0) {
+                clearInterval(checkReady);
+                startDetection(video);
+            }
+        }, 300);
 
-        // Маты OpenCV создаём один раз
+        return () => clearInterval(checkReady);
+    }, [isReady]);
+
+    function startDetection(video) {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
         const src = new cv.Mat(video.videoHeight, video.videoWidth, cv.CV_8UC4);
         const gray = new cv.Mat();
         const thresh = new cv.Mat();
@@ -1822,8 +1901,10 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         const hierarchy = new cv.Mat();
 
         const interval = setInterval(() => {
-            if (!video) return;
+            if (!video || video.videoWidth === 0) return;
 
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             src.data.set(imgData.data);
@@ -1866,14 +1947,13 @@ const CameraViewPage = ({ onCapture, onExit }) => {
 
         return () => {
             clearInterval(interval);
-            // Удаляем маты один раз при размонтировании
             src.delete();
             gray.delete();
             thresh.delete();
             contours.delete();
             hierarchy.delete();
         };
-    }, [isReady]);
+    }
 
     useEffect(() => {
         return () => stopCamera();
