@@ -481,7 +481,7 @@
   z-index: 1000;
   display: flex;
   align-items: flex-start;
-  width: 85vw;
+  width: 80vw;
   max-width: 420px;
   gap: 10px;
 }
@@ -513,7 +513,7 @@
 @media (max-width: 600px) {
   .hintMessage {
     top: calc(50% - 38vh - 30px); /* чуть ниже, чтобы не уехала вверх за экран */
-    width: 90vw;
+    width: 80vw;
     padding: 10px 12px;
   }
 
