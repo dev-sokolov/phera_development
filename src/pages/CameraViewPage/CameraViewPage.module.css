@@ -34,7 +34,7 @@
 /* ------------------ Верхние кнопки ------------------ */
 .topControls {
   position: absolute;
-  top: 20px;
+  top: 25px;
   left: 20px;
   z-index: 10;
   display: flex;
@@ -179,7 +179,7 @@
 .hintMessage {
   position: absolute;
   /* top: 4%; */
-  top: 20px;
+  top: 25px;
   left: 50%;
   transform: translate(-50%, -50%);
   /* color: white; */
