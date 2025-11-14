@@ -9,17 +9,17 @@
 }
 
 .capturedImageWrap {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 .capturedImage {
-  width: 90%;
-  max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .content {
@@ -58,8 +58,9 @@
 .phInfo {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-top: 16px;
-    gap: 20px;
+    /* gap: 20px; */
     color: #627084;
     font-size: 14px;
     flex-wrap: wrap;
@@ -68,6 +69,12 @@
 .phConfidence {
     display: flex;
     font-size: 12px;
+    font-weight: 600;
+    color: #2CB563;
+    background-color: #EBF7EF;
+    border: 1px solid #CAE9D4;
+    border-radius: 10px;
+    padding: 4px 13px;
 }
 
 .phDescription {
@@ -172,35 +179,50 @@
 /* --------------------------------------------- */
 
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #f5f6f3;
-  min-height: 100vh;
-  padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f5f6f3;
+    min-height: 100vh;
+    padding: 20px;
 }
 
 .preview {
-  width: 70%;
-  max-width: 400px;
-  border-radius: 12px;
-  margin: 20px 0;
+    width: 70%;
+    max-width: 400px;
+    border-radius: 12px;
+    margin: 20px 0;
 }
 
 .resultBox {
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px 24px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  text-align: center;
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    text-align: center;
 }
 
 .backBtn {
-  margin-top: 20px;
-  padding: 8px 16px;
-  border: none;
-  background: #333;
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
+    margin-top: 20px;
+    padding: 8px 16px;
+    border: none;
+    background: #333;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.clock {
+    width: 18px;
+    height: 18px;
+}
+
+.clock img {
+    width: 100%;
+    height: 100%;
+}
+
+.date {
+    margin-left: 5px;
+    margin-right: 12px;
 }
