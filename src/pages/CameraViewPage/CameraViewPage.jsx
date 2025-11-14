@@ -290,7 +290,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                     }}
                 ></button>
 
-                <Lottie
+                {/* <Lottie
                     key={isProcessing ? "processing" : "idle"}
                     animationData={processing_6}
                     loop={false}
@@ -305,7 +305,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                         pointerEvents: "none",
                         filter: "brightness(0) invert(1)",
                     }}
-                />
+                /> */}
             </div>
         </div>
     );
