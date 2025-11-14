@@ -140,7 +140,8 @@
   top: calc(54% + 21vh);
   left: 50%;
   transform: translateX(-50%);
-  width: 220px;
+  /* width: 220px; */
+  width: 80vw;
   height: 220px;
   display: flex;
   justify-content: center;
@@ -149,16 +150,29 @@
 }
 
 .scanBtn {
-  width: 70px;
-  height: 70px;
+  /* width: 70px; */
+  width: 100%;
+  /* height: 70px; */
   border: none;
-  border-radius: 50%;
+  /* border-radius: 50%; */
+  border-radius: 15px;
+
   cursor: pointer;
-  background-color: #ffffffb2;
+  /* background-color: #ffffffb2; */
+  background-color: #00303D;
+
+  color: #FFFFFF;
+  /* ← ДОБАВЬ ЭТО */
+  font-size: 16px;
+  /* рекомендуется */
+  font-weight: 600;
+  padding: 14px 0;
+  /* можно тоже */
 }
 
 .scanBtn.detected {
-  background-color: #ffd9009c;
+  /* background-color: #ffd9009c; */
+  background-color: #00303D;
 }
 
 /* ------------------ Подсказка ------------------ */

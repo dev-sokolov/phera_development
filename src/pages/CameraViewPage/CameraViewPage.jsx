@@ -288,9 +288,9 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                         opacity: hasFourMarkers ? 1 : 0.5,
                         cursor: (!hasFourMarkers || isProcessing) ? 'not-allowed' : 'pointer'
                     }}
-                ></button>
+                >Simulate auto-capture</button>
 
-                {/* <Lottie
+                <Lottie
                     key={isProcessing ? "processing" : "idle"}
                     animationData={processing_6}
                     loop={false}
@@ -305,7 +305,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                         pointerEvents: "none",
                         filter: "brightness(0) invert(1)",
                     }}
-                /> */}
+                />
             </div>
         </div>
     );
