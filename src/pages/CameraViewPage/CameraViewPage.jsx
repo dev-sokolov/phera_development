@@ -108,7 +108,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         // playClickSound();
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1700));
+            // await new Promise(resolve => setTimeout(resolve, 1700));
             const screenshot = webcamRef.current.getScreenshot({
                 width: 1920,
                 height: 1080,
