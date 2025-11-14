@@ -226,3 +226,16 @@
     margin-left: 5px;
     margin-right: 12px;
 }
+
+.fadeIn {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInAppear 1s ease-out forwards;
+}
+
+@keyframes fadeInAppear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

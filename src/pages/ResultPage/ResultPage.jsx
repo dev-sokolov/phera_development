@@ -82,7 +82,7 @@ const ResultPage = () => {
     };
 
     return (
-        <div className={styles.wrapResultPage}>
+        <div className={`${styles.wrapResultPage} ${styles.fadeIn}`}>
             <div className={styles.content}>
                 {/* pH результат */}
                 <div className={styles.ph}>

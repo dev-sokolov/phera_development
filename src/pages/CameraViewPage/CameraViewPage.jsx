@@ -12,6 +12,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
     const [isReady, setIsReady] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [hasFourMarkers, setHasFourMarkers] = useState(false);
+    const [buttonText, setButtonText] = useState("Simulate auto-capture");
 
     const stopCamera = () => {
         const video = webcamRef.current?.video;
@@ -103,9 +104,11 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         if (!webcamRef.current || !hasFourMarkers || isProcessing) return;
 
         setIsProcessing(true);
-        playClickSound();
+        setButtonText("Capturing...");
+        // playClickSound();
 
         try {
+            await new Promise(resolve => setTimeout(resolve, 1700));
             const screenshot = webcamRef.current.getScreenshot({
                 width: 1920,
                 height: 1080,
@@ -288,9 +291,9 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                         opacity: hasFourMarkers ? 1 : 0.5,
                         cursor: (!hasFourMarkers || isProcessing) ? 'not-allowed' : 'pointer'
                     }}
-                >Simulate auto-capture</button>
+                >{buttonText}</button>
 
-                <Lottie
+                {/* <Lottie
                     key={isProcessing ? "processing" : "idle"}
                     animationData={processing_6}
                     loop={false}
@@ -305,7 +308,7 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                         pointerEvents: "none",
                         filter: "brightness(0) invert(1)",
                     }}
-                />
+                /> */}
             </div>
         </div>
     );
