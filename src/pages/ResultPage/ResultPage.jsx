@@ -14,12 +14,12 @@ import styles from "./ResultPage.module.css";
 
 const ResultPage = () => {
     const { state } = useLocation();
-    console.log("📸 Данные с камеры:", state);
+    console.log("Данные с камеры:", state);
     const { phValue, date, confidence } = state;
     console.log(`phValue: ${phValue}, date: ${date}, confidence: ${confidence}`);
 
     // дальше можно использовать state.phValue, state.image и т.д.
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
     const [isDataSharingActive, setIsDataSharingActive] = useState(false);

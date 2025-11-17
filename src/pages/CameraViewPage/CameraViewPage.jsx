@@ -1,10 +1,10 @@
 import { useRef, useState, useEffect } from "react";
-import Lottie from "lottie-react";
+// import Lottie from "lottie-react";
 import Webcam from "react-webcam";
 import { addImage } from "../../shared/api/images-api.js";
 import styles from "./CameraViewPage.module.css";
-import notificationSound from "../../assets/sounds/notification.mp3";
-import processing_6 from "../../assets/lottie/processing_6.json";
+// import notificationSound from "../../assets/sounds/notification.mp3";
+// import processing_6 from "../../assets/lottie/processing_6.json";
 import alertCircle from "../../assets/icons/alertCircle.svg";
 
 const CameraViewPage = ({ onCapture, onExit }) => {
@@ -20,84 +20,9 @@ const CameraViewPage = ({ onCapture, onExit }) => {
         tracks?.forEach((track) => track.stop());
     };
 
-    const playClickSound = () => {
-        const audio = new Audio(notificationSound);
-        audio.play().catch(() => { });
-    };
-
-    //   Захват и отправка полного изображения!!!!!!!!!!!!!!!!!!!!!!!не удалять!!!!!!!!!!!!
-    // const handleCapture = async () => {
-    //     if (!webcamRef.current) return;
-
-    //     setIsProcessing(true);
-    //     playClickSound();
-
-    //     try {
-    //         const screenshot = webcamRef.current.getScreenshot({
-    //             width: 1920,
-    //             height: 1080,
-    //         });
-
-    //         if (!screenshot) {
-    //             throw new Error("Не удалось сделать снимок. Попробуйте ещё раз.");
-    //         }
-
-    //         const blob = await fetch(screenshot).then((r) => r.blob());
-    //         const formData = new FormData();
-    //         formData.append("image", blob, "capture.png");
-
-    //         // Отправляем на backend
-    //         const response = await fetch("https://your-backend-api.com/upload", {
-    //             method: "POST",
-    //             body: formData,
-    //         });
-
-    //         if (!response.ok) throw new Error("Ошибка при загрузке изображения");
-
-    //         const result = await response.json();
-    //         stopCamera();
-    //         if (onUploadSuccess) onUploadSuccess(result);
-    //     } catch (error) {
-    //         console.error(error);
-    //         setErrorMessage(error.message || "Ошибка при захвате изображения");
-    //         setTimeout(() => setErrorMessage(""), 3000);
-    //     } finally {
-    //         setIsProcessing(false);
-    //     }
-    // };
-
-    // 🚀 Временно заменяем upload-запрос на mock!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    // const handleCapture = async () => {
-    //     if (!webcamRef.current || !hasFourMarkers || isProcessing) return;
-
-    //     setIsProcessing(true);
-    //     playClickSound();
-
-    //     try {
-    //         const screenshot = webcamRef.current.getScreenshot({
-    //             width: 1920,
-    //             height: 1080,
-    //         });
-
-    //         if (!screenshot) throw new Error("Failed to capture image.");
-
-    //         await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    //         const fakeResult = {
-    //             phValue: 4.3,
-    //             date: new Date().toLocaleString(),
-    //             confidence: "98%",
-    //             image: screenshot,
-    //         };
-
-    //         stopCamera();
-    //         if (onCapture) onCapture(fakeResult);
-    //     } catch (error) {
-    //         console.error(error);
-    //     } finally {
-    //         setIsProcessing(false);
-    //     }
+    // const playClickSound = () => {
+    //     const audio = new Audio(notificationSound);
+    //     audio.play().catch(() => { });
     // };
 
     const handleCapture = async () => {
@@ -260,18 +185,6 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                 <div className={styles["bottom-right"]}></div>
             </div>
 
-            {/* Подсказка */}
-            {/* {!hasFourMarkers && !isProcessing && (
-                <div className={styles.hintMessage}>
-                    <div className={styles.hintMessageImg}><img src={alertCircle} alt="AlertCircle" /></div>
-                    <div>
-                        <p className={styles.hintMessageTitle}>Align the test card in the frame</p>
-                        <p className={styles.hintMessageText}>Avoid colored light, fill the frame, hold steady. We will capture automatically.</p>
-                    </div>
-                    
-                </div>
-            )} */}
-
             <div className={styles.hintMessage}>
                 <div className={styles.hintMessageImg}><img src={alertCircle} alt="AlertCircle" /></div>
                 <div>
@@ -292,23 +205,6 @@ const CameraViewPage = ({ onCapture, onExit }) => {
                         cursor: (!hasFourMarkers || isProcessing) ? 'not-allowed' : 'pointer'
                     }}
                 >{buttonText}</button>
-
-                {/* <Lottie
-                    key={isProcessing ? "processing" : "idle"}
-                    animationData={processing_6}
-                    loop={false}
-                    style={{
-                        width: "80px",
-                        height: "80px",
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        opacity: isProcessing ? 1 : 0,
-                        pointerEvents: "none",
-                        filter: "brightness(0) invert(1)",
-                    }}
-                /> */}
             </div>
         </div>
     );
