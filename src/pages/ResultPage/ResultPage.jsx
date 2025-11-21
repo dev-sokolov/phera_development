@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import JSZip from "jszip";
 import { useState, useRef } from "react";
 
@@ -14,12 +14,15 @@ import styles from "./ResultPage.module.css";
 
 const ResultPage = () => {
     const { state } = useLocation();
+    if (!state || !state.phValue || !state.date || !state.confidence) {
+        return <Navigate to="/" replace />;
+    }
     console.log("Данные с камеры:", state);
     const { phValue, date, confidence } = state;
-    console.log(`phValue: ${phValue}, date: ${date}, confidence: ${confidence}`);
+    const value = Number(phValue);
+    const safePh = isNaN(value) ? "N/A" : value;
+    console.log(`phValue: ${safePh}, date: ${date}, confidence: ${confidence}`);
 
-    // дальше можно использовать state.phValue, state.image и т.д.
-    // const navigate = useNavigate();
     const fileInputRef = useRef(null);
 
     const [isDataSharingActive, setIsDataSharingActive] = useState(false);
@@ -27,29 +30,42 @@ const ResultPage = () => {
     const [hormone, setHormone] = useState([]);
     const [ancestral, setAncestral] = useState("");
 
-    //  Экспорт ZIP
+    //  Export ZIP
     const handleExportZip = async () => {
         const data = {
-            phValue: phValue,
+            phValue: safePh,
             date: date,
-            confidence: confidence
+            confidence: Number(confidence)
         };
+
+        if (
+            typeof data.phValue !== "number" ||
+            typeof data.date !== "string" ||
+            typeof data.confidence !== "number"
+        ) {
+            alert("Incorrect file format");
+            return;
+        }
 
         const json = JSON.stringify(data, null, 2);
         const zip = new JSZip();
         zip.file("ph_results.json", json);
 
-        const content = await zip.generateAsync({ type: "blob" });
+        try {
+            const content = await zip.generateAsync({ type: "blob" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(content);
+            link.download = "ph_results.zip";
+            link.click();
 
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(content);
-        link.download = "ph_results.zip";
-        link.click();
-
-        URL.revokeObjectURL(link.href);
+            URL.revokeObjectURL(link.href);
+        } catch (error) {
+            console.error("ZIP export error", error);
+            alert("Failed to export results.");
+        }
     };
 
-    //  Импорт JSON
+    //  Import JSON
     const handleImportClick = () => {
         fileInputRef.current.click();
     };
@@ -58,16 +74,24 @@ const ResultPage = () => {
         const file = event.target.files[0];
         if (!file) return;
 
-        if (!file.name.endsWith(".json")) {
-            alert("Пожалуйста, выберите файл формата JSON");
+        if (!file.name.toLowerCase().endsWith(".json")) {
+            alert("Please select a JSON file");
             return;
         }
-
+        // File import
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
                 const content = e.target.result;
                 const data = JSON.parse(content);
+                if (
+                    typeof data.phValue !== "number" ||
+                    typeof data.date !== "string" ||
+                    typeof data.confidence !== "number"
+                ) {
+                    alert("Invalid JSON format");
+                    return;
+                }
                 console.log("Импортированные данные:", data);
             } catch (err) {
                 console.error("Ошибка при чтении файла", err);
@@ -76,7 +100,7 @@ const ResultPage = () => {
         reader.readAsText(file);
     };
 
-    // 👩‍⚕️ Переход к врачу
+    // Transition to the doctor
     const handleTalkToDoctor = () => {
         window.open("https://phera.digital/doctor", "_blank");
     };
@@ -84,26 +108,23 @@ const ResultPage = () => {
     return (
         <div className={`${styles.wrapResultPage} ${styles.fadeIn}`}>
             <div className={styles.content}>
-                {/* pH результат */}
                 <div className={styles.ph}>
                     <p className={styles.phTitle}>Your pH</p>
-                    <p className={styles.phValue}>{state.phValue}</p>
+                    <p className={styles.phValue}>{safePh}</p>
                     <div className={styles.phInfo}>
                         <div className={styles.clock}><img src={icon_clock} alt="clock" /></div>
-                        <div className={styles.date}>{state.date}</div>
+                        <div className={styles.date}>{date}</div>
                         <div className={styles.phConfidence}>
-                            <div>{state.confidence}<span>% Confidence</span></div>
+                            <div>{confidence}<span>% Confidence</span></div>
                         </div>
                     </div>
                 </div>
 
-                {/* Описание */}
                 <div className={styles.phDescription}>
                     <h3>What This Means</h3>
                     <p>Your pH is within the typical acidic range associated with Lactobacillus dominance.</p>
                 </div>
 
-                {/* Кнопки */}
                 <div className={styles.processingResults}>
                     <div className={styles.wrapBtn}>
                         <button className={styles.btn} onClick={handleExportZip}>
@@ -150,7 +171,6 @@ const ResultPage = () => {
                     </div>
                 </div>
 
-                {/* Персональные данные */}
                 <div className={styles.personalData}>
                     <PersonalData
                         isActive={isDataSharingActive}
@@ -164,7 +184,6 @@ const ResultPage = () => {
                 </div>
             </div>
 
-            {/* Footer */}
             <div className={styles.footer}>
                 Privacy: Frames are processed in memory and discarded. Results are not saved unless you export.
             </div>
