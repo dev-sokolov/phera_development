@@ -231,7 +231,7 @@ const ResultPage = () => {
     const [isDataSharingActive, setIsDataSharingActive] = useState(false);
     const [age, setAge] = useState("");
     const [hormone, setHormone] = useState([]);
-    const [ancestral, setAncestral] = useState("");
+    const [ancestral, setAncestral] = useState([]);
 
     return (
         <div className={`${styles.wrapResultPage} ${styles.fadeIn}`}>
